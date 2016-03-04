@@ -330,7 +330,7 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, GMSMapView
             let carMarker = UIImage(named: "CarFilled.png")
             gaddMarker.icon = resizeImage(carMarker!, scaledToSize: CGSizeMake(30,30))
             //locationMarker1.icon = imageWithImage(clustImage!, scaledToSize: CGSizeMake(30,30))
-            
+            //useless comment
             
             gaddMarker.map = mapView
         }
