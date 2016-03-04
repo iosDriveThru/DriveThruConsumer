@@ -1,0 +1,41 @@
+{
+  "Consumer_ID": "",
+  "preferences": {
+    "products": [
+      {
+        "product_id": "2",
+        "customization_present": true,
+        "customization": [
+          {
+            "category": "Size",
+            "category_value": "Medium"
+          },
+          {
+            "category": "Milk",
+            "category_value": "2%"
+          }
+        ]
+      },
+      {
+        "product_id": "4",
+        "customization_present": true,
+        "customization": [
+          {
+            "category": "Size",
+            "category_value": "Tall"
+          },
+          {
+            "category": "Milk",
+            "category_value": "Whole"
+          }
+        ]
+      },
+      {
+        "product_id": "5",
+        "customization_present": false,
+        "customization": [
+        ]
+      }
+    ]
+  }
+}

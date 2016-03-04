@@ -1,0 +1,245 @@
+{
+    "products": [
+        {
+            "productID": 1,
+            "product_name": "cappuccino",
+            "product_image": "http:\/\/res.cloudinary.com\/nanite\/image\/upload\/v1454648038\/cappuccino_zwb9ip.jpg",
+            "merchant_id": 1,
+            "product_price": 150,
+            "product_created_at": "2016-01-25 12:50:00",
+            "product_updated_at": "2016-01-25 12:50:00",
+            "customization_availability": true,
+            "product_customization_details": {
+                "categories": [
+                    {
+                        "Category_Name": "Drink Type",
+                        "Values": [
+                            {
+                                "category_value_name": "drink_type_1",
+                                "store_alias_name": "warm",
+                                "id_customization_value_alias": 1,
+                                "customization_price": 80,
+                                "customization_category_name": "Drink Type",
+                                "category_ID": 1
+                            },
+                            {
+                                "category_value_name": "drink_type_2",
+                                "store_alias_name": "iced",
+                                "id_customization_value_alias": 2,
+                                "customization_price": 80,
+                                "customization_category_name": "Drink Type",
+                                "category_ID": 1
+                            }
+                        ]
+                    },
+                    {
+                        "Category_Name": "Kind of Espresso",
+                        "Values": [
+                            {
+                                "category_value_name": "kind_of_espresso_one",
+                                "store_alias_name": "regular",
+                                "id_customization_value_alias": 3,
+                                "customization_price": 80,
+                                "customization_category_name": "Kind of Espresso",
+                                "category_ID": 2
+                            },
+                            {
+                                "category_value_name": "kind_of_espresso_two",
+                                "store_alias_name": "decaf",
+                                "id_customization_value_alias": 4,
+                                "customization_price": 80,
+                                "customization_category_name": "Kind of Espresso",
+                                "category_ID": 2
+                            },
+                            {
+                                "category_value_name": "kind_of_espresso_three",
+                                "store_alias_name": "half_caf",
+                                "id_customization_value_alias": 5,
+                                "customization_price": 80,
+                                "customization_category_name": "Kind of Espresso",
+                                "category_ID": 2
+                            }
+                        ]
+                    },
+                    {
+                        "Category_Name": "Amount of Espresso",
+                        "Values": [
+                            {
+                                "category_value_name": "amount_of_espresso_one",
+                                "store_alias_name": "single",
+                                "id_customization_value_alias": 6,
+                                "customization_price": 80,
+                                "customization_category_name": "Amount of Espresso",
+                                "category_ID": 3
+                            },
+                            {
+                                "category_value_name": "amount_of_espresso_two",
+                                "store_alias_name": "double",
+                                "id_customization_value_alias": 7,
+                                "customization_price": 80,
+                                "customization_category_name": "Amount of Espresso",
+                                "category_ID": 3
+                            },
+                            {
+                                "category_value_name": "amount_of_espresso_three",
+                                "store_alias_name": "triple",
+                                "id_customization_value_alias": 8,
+                                "customization_price": 80,
+                                "customization_category_name": "Amount of Espresso",
+                                "category_ID": 3
+                            },
+                            {
+                                "category_value_name": "amount_of_espresso_three",
+                                "store_alias_name": "quad",
+                                "id_customization_value_alias": 9,
+                                "customization_price": 80,
+                                "customization_category_name": "Amount of Espresso",
+                                "category_ID": 3
+                            },
+                            {
+                                "category_value_name": "amount_of_espresso_four",
+                                "store_alias_name": "N shots",
+                                "id_customization_value_alias": 10,
+                                "customization_price": 80,
+                                "customization_category_name": "Amount of Espresso",
+                                "category_ID": 3
+                            }
+                        ]
+                    },
+                    {
+                        "Category_Name": "Size",
+                        "Values": [
+                            {
+                                "category_value_name": "size_1x",
+                                "store_alias_name": "short",
+                                "id_customization_value_alias": 11,
+                                "customization_price": 80,
+                                "customization_category_name": "Size",
+                                "category_ID": 4
+                            },
+                            {
+                                "category_value_name": "size_2x",
+                                "store_alias_name": "tall",
+                                "id_customization_value_alias": 12,
+                                "customization_price": 80,
+                                "customization_category_name": "Size",
+                                "category_ID": 4
+                            },
+                            {
+                                "category_value_name": "size_3x",
+                                "store_alias_name": "grande",
+                                "id_customization_value_alias": 13,
+                                "customization_price": 80,
+                                "customization_category_name": "Size",
+                                "category_ID": 4
+                            },
+                            {
+                                "category_value_name": "size_4x",
+                                "store_alias_name": "venti",
+                                "id_customization_value_alias": 14,
+                                "customization_price": 80,
+                                "customization_category_name": "Size",
+                                "category_ID": 4
+                            }
+                        ]
+                    },
+                    {
+                        "Category_Name": "Milk Type",
+                        "Values": [
+                            {
+                                "category_value_name": "milk_type_1",
+                                "store_alias_name": "non-fat",
+                                "id_customization_value_alias": 15,
+                                "customization_price": 80,
+                                "customization_category_name": "Milk Type",
+                                "category_ID": 5
+                            },
+                            {
+                                "category_value_name": "milk_type_2",
+                                "store_alias_name": "twp percent",
+                                "id_customization_value_alias": 16,
+                                "customization_price": 80,
+                                "customization_category_name": "Milk Type",
+                                "category_ID": 5
+                            },
+                            {
+                                "category_value_name": "milk_type_3",
+                                "store_alias_name": "whole",
+                                "id_customization_value_alias": 17,
+                                "customization_price": 80,
+                                "customization_category_name": "Milk Type",
+                                "category_ID": 5
+                            },
+                            {
+                                "category_value_name": "milk_type_3",
+                                "store_alias_name": "breve",
+                                "id_customization_value_alias": 18,
+                                "customization_price": 80,
+                                "customization_category_name": "Milk Type",
+                                "category_ID": 5
+                            },
+                            {
+                                "category_value_name": "milk_type_4",
+                                "store_alias_name": "soy",
+                                "id_customization_value_alias": 19,
+                                "customization_price": 80,
+                                "customization_category_name": "Milk Type",
+                                "category_ID": 5
+                            }
+                        ]
+                    },
+                    {
+                        "Category_Name": "Syrup Type",
+                        "Values": [
+                            {
+                                "category_value_name": "syrup_type_1",
+                                "store_alias_name": "none",
+                                "id_customization_value_alias": 20,
+                                "customization_price": 80,
+                                "customization_category_name": "Syrup Type",
+                                "category_ID": 6
+                            },
+                            {
+                                "category_value_name": "syrup_type_2",
+                                "store_alias_name": "chocolate",
+                                "id_customization_value_alias": 21,
+                                "customization_price": 80,
+                                "customization_category_name": "Syrup Type",
+                                "category_ID": 6
+                            },
+                            {
+                                "category_value_name": "syrup_type_3",
+                                "store_alias_name": "peppermint",
+                                "id_customization_value_alias": 22,
+                                "customization_price": 80,
+                                "customization_category_name": "Syrup Type",
+                                "category_ID": 6
+                            },
+                            {
+                                "category_value_name": "syrup_type_4",
+                                "store_alias_name": "caramel",
+                                "id_customization_value_alias": 23,
+                                "customization_price": 80,
+                                "customization_category_name": "Syrup Type",
+                                "category_ID": 6
+                            }
+                        ]
+                    }
+                ]
+            }
+        },
+        {
+            "productID": 2,
+            "product_name": "coffee",
+            "product_image": "http:\/\/res.cloudinary.com\/nanite\/image\/upload\/v1454648061\/blackCoffee_anvbnt.jpg",
+            "merchant_id": 1,
+            "product_price": 65,
+            "product_created_at": "2016-01-28 00:00:00",
+            "product_updated_at": "2016-01-28 00:00:00",
+            "customization_availability": false,
+            "product_customization_details": {
+                "categories": []
+            }
+        }
+    ]
+}
