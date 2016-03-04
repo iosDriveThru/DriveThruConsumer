@@ -10,6 +10,7 @@ import UIKit
 import GoogleMaps
 import CoreData
 class MyStoresViewController: UIViewController , GMSMapViewDelegate, UISearchBarDelegate,UITableViewDataSource,UITableViewDelegate,UITextFieldDelegate {
+    var appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
     var isMarkerTitleset:Bool = false
     var currentLatitude:Double = 12.919687
     var currentLongitude:Double = 77.592188
@@ -33,6 +34,7 @@ class MyStoresViewController: UIViewController , GMSMapViewDelegate, UISearchBar
     @IBOutlet var mapView: GMSMapView!
     @IBOutlet var searchBar: UISearchBar!
     @IBOutlet var txtShopName: UITextField!
+    @IBOutlet var merchantImageView: UIImageView!
     
     
     override func viewDidLoad() {
@@ -45,6 +47,7 @@ class MyStoresViewController: UIViewController , GMSMapViewDelegate, UISearchBar
         mapRelatedSettings()
         getUserDetails()
         getStoreDetails()
+        displayMerchantImage()
         txtShopName.delegate = self
         if orderVC.isOrderPlaced == true
         {
@@ -99,6 +102,35 @@ class MyStoresViewController: UIViewController , GMSMapViewDelegate, UISearchBar
     func textFieldShouldReturn(textField: UITextField) -> Bool{
         textField.resignFirstResponder()
         return true
+    }
+    
+    func displayMerchantImage()
+    {
+        let imageName = self.appDelegate.MerchantImageUrlString
+        let url = NSURL(string: imageName)
+        let request: NSURLRequest = NSURLRequest(URL: url!)
+        let mainQueue = NSOperationQueue.mainQueue()
+        NSURLConnection.sendAsynchronousRequest(request, queue: mainQueue, completionHandler: { (response, data, error) -> Void in
+            if error == nil {
+                // Convert the downloaded data in to a UIImage object
+                let image = UIImage(data: data!)
+                // Store the image in to our cache
+                // Update the cell
+                dispatch_async(dispatch_get_main_queue(), {
+                    // if let cellToUpdate = menuCV.cellForRowAtIndexPath(indexPath) as? menuCollectionViewCell {
+                    // cellToUpdate.imageView?.image = image
+                    self.merchantImageView.image = image
+                    
+                    // }
+                })
+                
+            }
+            else {
+                print("Error: \(error!.localizedDescription)")
+            }
+        })
+        
+        
     }
     // setting maprelated
     func mapRelatedSettings(){

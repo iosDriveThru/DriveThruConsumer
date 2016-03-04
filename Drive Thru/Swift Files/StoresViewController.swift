@@ -61,7 +61,7 @@ class StoresViewController: UIViewController {
                 for outsideIndex in 0...self.appDelegate.preferenceJson.products.count-1
                 {
                     self.appDelegate.preferenceJson.products[outsideIndex].SourceType = "\(outsideIndex)_Preference_Cust"
-                    self.appDelegate.preferenceJson.products[outsideIndex].productImage = self.appDelegate.preferenceJson.products[outsideIndex].productImage.stringByReplacingOccurrencesOfString("upload", withString: "upload/h_100,w_100,r_8")
+                    self.appDelegate.preferenceJson.products[outsideIndex].productImage = self.appDelegate.preferenceJson.products[outsideIndex].productImage.stringByReplacingOccurrencesOfString("upload", withString: "upload/h_300,w_300,r_10")
                     self.appDelegate.preferenceJson.products[outsideIndex].productImage = self.appDelegate.preferenceJson.products[outsideIndex].productImage.stringByReplacingOccurrencesOfString("jpg", withString: "png")
                     for index in 0...(self.appDelegate.preferenceJson.products[outsideIndex].customizationDetails.CustomizationcategoryDetails.count)-1
                     {
@@ -101,7 +101,7 @@ class StoresViewController: UIViewController {
                 for index in 0...self.appDelegate.menuJson.products.count-1
                 {
                     self.appDelegate.menuJson.products[index].SourceType = "\(index)_Menu"
-                    self.appDelegate.menuJson.products[index].productImage = self.appDelegate.menuJson.products[index].productImage.stringByReplacingOccurrencesOfString("upload", withString: "upload/h_100,w_100,r_8")
+                    self.appDelegate.menuJson.products[index].productImage = self.appDelegate.menuJson.products[index].productImage.stringByReplacingOccurrencesOfString("upload", withString: "upload/h_300,w_300,r_10")
                     self.appDelegate.menuJson.products[index].productImage = self.appDelegate.menuJson.products[index].productImage.stringByReplacingOccurrencesOfString("jpg", withString: "png")
                 }
                 self.appDelegate.originalMenuJson = self.appDelegate.menuJson

@@ -17,6 +17,8 @@ class PreferenceViewController: UIViewController, UICollectionViewDelegate, UICo
     var customizationIndex:Int = Int()
     var isComingFromCustomization = false
     var isPrefereceCancelButtonClicked = false
+    var fromCustSourceType: String = ""
+    @IBOutlet var merchantImageView: UIImageView!
     @IBOutlet var menuCV: UICollectionView!
     @IBOutlet weak var lblTotalPriceCart: UILabel!
     @IBOutlet var lblDisplayCustomization: UILabel!
@@ -25,9 +27,19 @@ class PreferenceViewController: UIViewController, UICollectionViewDelegate, UICo
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
+        menuCV.delegate = self
+        menuCV.dataSource = self
+        displayMerchantImage()
+        
         if isComingFromCustomization
         {
+            let value = self.fromCustSourceType
+            print(value)
+            var arrayOfMappedDictKey = value.characters.split{$0=="_"}.map(String.init)
+            let indexPathRow = Int(arrayOfMappedDictKey[0])
             menuCV.reloadData()
+            self.menuCV.layoutIfNeeded()
+            self.menuCV.scrollToItemAtIndexPath(NSIndexPath(forItem: indexPathRow! , inSection: 0), atScrollPosition: UICollectionViewScrollPosition.CenteredHorizontally, animated: true)
             segmentCustomizationYesNo.selected = false
             lblDisplayCustomization.hidden = false
             if isPrefereceCancelButtonClicked{
@@ -40,8 +52,7 @@ class PreferenceViewController: UIViewController, UICollectionViewDelegate, UICo
             
         }
         
-        menuCV.delegate = self
-        menuCV.dataSource = self
+        
         
     }
     
@@ -74,6 +85,37 @@ class PreferenceViewController: UIViewController, UICollectionViewDelegate, UICo
             performSegueWithIdentifier("segPreferencetoCustomize", sender: self)
         }
         segmentCustomizationYesNo.selected = false
+        
+    }
+    
+    
+    
+    func displayMerchantImage()
+    {
+        let imageName = self.appDelegate.MerchantImageUrlString
+        let url = NSURL(string: imageName)
+        let request: NSURLRequest = NSURLRequest(URL: url!)
+        let mainQueue = NSOperationQueue.mainQueue()
+        NSURLConnection.sendAsynchronousRequest(request, queue: mainQueue, completionHandler: { (response, data, error) -> Void in
+            if error == nil {
+                // Convert the downloaded data in to a UIImage object
+                let image = UIImage(data: data!)
+                // Store the image in to our cache
+                // Update the cell
+                dispatch_async(dispatch_get_main_queue(), {
+                    // if let cellToUpdate = menuCV.cellForRowAtIndexPath(indexPath) as? menuCollectionViewCell {
+                    // cellToUpdate.imageView?.image = image
+                    self.merchantImageView.image = image
+                    
+                    // }
+                })
+                
+            }
+            else {
+                print("Error: \(error!.localizedDescription)")
+            }
+        })
+        
         
     }
     
@@ -385,6 +427,11 @@ extension PreferenceViewController: UIScrollViewDelegate {
             menuCV.reloadData()
             
         }
+      
+    }
+    
+    func scrollViewDidScroll(scrollView: UIScrollView)
+    {
         if segmentCustomizationYesNo.hidden == false || lblDisplayCustomization.hidden == false
         {
             segmentCustomizationYesNo.hidden = true

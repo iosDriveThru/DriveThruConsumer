@@ -19,6 +19,7 @@ class customizationViewController: UIViewController,UITableViewDataSource, UITab
     var isComingFromPreference:Bool = false
     var arrayCustomizationSelected:[Bool] = []
     
+    @IBOutlet var merchantImageView: UIImageView!
     @IBOutlet var tableView: UITableView!
     @IBOutlet var btnCancel: UIButton!
     @IBOutlet var imgItem: UIImageView!
@@ -29,7 +30,7 @@ class customizationViewController: UIViewController,UITableViewDataSource, UITab
         super.viewDidLoad()
         
         // Do any additional setup after loading the view, typically from a nib.
-        
+        displayMerchantImage()
         displayProductImage()
         tableView.dataSource = self
         tableView.delegate = self
@@ -61,6 +62,37 @@ class customizationViewController: UIViewController,UITableViewDataSource, UITab
                     // if let cellToUpdate = menuCV.cellForRowAtIndexPath(indexPath) as? menuCollectionViewCell {
                     // cellToUpdate.imageView?.image = image
                     self.imgItem.image = image
+                    
+                    // }
+                })
+                
+            }
+            else {
+                print("Error: \(error!.localizedDescription)")
+            }
+        })
+        
+        
+    }
+    
+    
+    
+    func displayMerchantImage()
+    {
+        let imageName = self.appDelegate.MerchantImageUrlString
+        let url = NSURL(string: imageName)
+        let request: NSURLRequest = NSURLRequest(URL: url!)
+        let mainQueue = NSOperationQueue.mainQueue()
+        NSURLConnection.sendAsynchronousRequest(request, queue: mainQueue, completionHandler: { (response, data, error) -> Void in
+            if error == nil {
+                // Convert the downloaded data in to a UIImage object
+                let image = UIImage(data: data!)
+                // Store the image in to our cache
+                // Update the cell
+                dispatch_async(dispatch_get_main_queue(), {
+                    // if let cellToUpdate = menuCV.cellForRowAtIndexPath(indexPath) as? menuCollectionViewCell {
+                    // cellToUpdate.imageView?.image = image
+                    self.merchantImageView.image = image
                     
                     // }
                 })
@@ -380,7 +412,12 @@ extension customizationViewController: UICollectionViewDelegate, UICollectionVie
         
         if (segue.identifier == "segCustomizationToPreference")
         {
+            let value = ProductCustomization!.SourceType
+            var arrayOfMappedDictKey = value.characters.split{$0=="_"}.map(String.init)
+            let sourceIndex = arrayOfMappedDictKey[0]
+            let source = arrayOfMappedDictKey[1]
             let destinationVC = segue.destinationViewController as! PreferenceViewController
+            destinationVC.fromCustSourceType = (ProductCustomization?.SourceType)!
             if arrayCustomizationSelected.contains(true)
             {
                 destinationVC.isComingFromCustomization = true

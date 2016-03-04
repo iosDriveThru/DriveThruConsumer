@@ -4,10 +4,6 @@
 <dict>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
-	<key>NSLocationAlwaysUsageDescription</key>
-	<string>Drive-thru would like to access your location</string>
-	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>Drive-thru would like to access your location</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -100,6 +96,10 @@
 			</dict>
 		</dict>
 	</dict>
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>Drive-thru would like to access your location</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Drive-thru would like to access your location</string>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>fetch</string>

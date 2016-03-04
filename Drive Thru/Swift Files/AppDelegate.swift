@@ -36,6 +36,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate, GIDSignInDelegate {
     var preferenceJson: Preference = Preference()
     var isMenuChanged:Bool = false
     var isPreferenceChanged:Bool = false
+    var MerchantImageUrlString:String = ""
+    var MerchantId:String = ""
     // var cart:Cart = Cart()
     var mappedDictionary: Dictionary<String, productDetails> = [:]
     

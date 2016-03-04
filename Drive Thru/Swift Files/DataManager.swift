@@ -61,7 +61,7 @@ public class DataManager {
         let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
         var savePreference:SetPreference = SetPreference()
         savePreference.Consumer_ID = Int(appDelegate.userID)
-        savePreference.Merchant_ID = 25
+        savePreference.Merchant_ID = Int(appDelegate.MerchantId)
         savePreference.setPreference = appDelegate.preferenceJson
         let savePreferenceJsonObject = savePreference.toJSON()
         print(savePreferenceJsonObject)
@@ -75,7 +75,7 @@ public class DataManager {
         }
         
         
-        DataManager.saveJsonToRestfull(savePreferenceJsonData, url: "http://sqweezy.com/DriveThru/Save_Orderdetails.php")
+        DataManager.saveJsonToRestfull(savePreferenceJsonData, url: "http://sqweezy.com/DriveThru/save_user_preferences.php")
         appDelegate.isPreferenceChanged = false
     }
     

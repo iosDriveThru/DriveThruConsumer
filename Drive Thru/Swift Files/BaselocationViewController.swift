@@ -11,6 +11,7 @@ import GoogleMaps
 import CoreData
 class BaselocationViewController: UIViewController, GMSMapViewDelegate, UISearchBarDelegate,UITableViewDataSource,UITableViewDelegate
 {
+    var appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
     var isLocationAddressSet:Bool = false
     var currentLatitude:Double = 12.919687
     var currentLongitude:Double = 77.592188
@@ -31,6 +32,7 @@ class BaselocationViewController: UIViewController, GMSMapViewDelegate, UISearch
     @IBOutlet var searchBar: UISearchBar!
     @IBOutlet var segmentController: UISegmentedControl!
     
+    @IBOutlet var merchantImageView: UIImageView!
     
     
     override func viewDidLoad() {
@@ -41,28 +43,9 @@ class BaselocationViewController: UIViewController, GMSMapViewDelegate, UISearch
         mapRelatedSettings()
         getUserDetails()
         settingButtonDesign()
+        displayMerchantImage()
     }
-    func settingButtonDesign()
-    {
-        btnSkip.layer.borderWidth = 1.0
-        btnSkip.layer.cornerRadius = 5.0
-        btnSkip.layer.borderColor = UIColor(red: 146/255, green: 146/255, blue: 146/255, alpha: 1.0).CGColor
-        
-        btnSkip.layer.shadowRadius = 3.0
-        btnSkip.layer.shadowColor = UIColor(red: 146/255, green: 146/255, blue: 146/255, alpha: 1.0).CGColor
-        btnSkip.layer.shadowOffset = CGSizeMake(5.0, 5.0)
-        btnSkip.layer.shadowOpacity = 1.0
-        btnSkip.layer.masksToBounds = false
-        
-        btnDone.layer.borderWidth = 1.0
-        btnDone.layer.cornerRadius = 5.0
-        btnDone.layer.borderColor = UIColor(red: 146/255, green: 146/255, blue: 146/255, alpha: 1.0).CGColor
-        btnDone.layer.shadowRadius = 3.0
-        btnDone.layer.shadowColor = UIColor(red: 146/255, green: 146/255, blue: 146/255, alpha: 1.0).CGColor
-        btnDone.layer.shadowOffset = CGSizeMake(5.0, 5.0)
-        btnDone.layer.shadowOpacity = 1.0
-        btnDone.layer.masksToBounds = false
-    }
+    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
@@ -98,6 +81,27 @@ class BaselocationViewController: UIViewController, GMSMapViewDelegate, UISearch
         btnSkip.hidden = true
         isLocationAddressSet = false
      }
+    func settingButtonDesign()
+    {
+        btnSkip.layer.borderWidth = 1.0
+        btnSkip.layer.cornerRadius = 5.0
+        btnSkip.layer.borderColor = UIColor(red: 146/255, green: 146/255, blue: 146/255, alpha: 1.0).CGColor
+        
+        btnSkip.layer.shadowRadius = 3.0
+        btnSkip.layer.shadowColor = UIColor(red: 146/255, green: 146/255, blue: 146/255, alpha: 1.0).CGColor
+        btnSkip.layer.shadowOffset = CGSizeMake(5.0, 5.0)
+        btnSkip.layer.shadowOpacity = 1.0
+        btnSkip.layer.masksToBounds = false
+        
+        btnDone.layer.borderWidth = 1.0
+        btnDone.layer.cornerRadius = 5.0
+        btnDone.layer.borderColor = UIColor(red: 146/255, green: 146/255, blue: 146/255, alpha: 1.0).CGColor
+        btnDone.layer.shadowRadius = 3.0
+        btnDone.layer.shadowColor = UIColor(red: 146/255, green: 146/255, blue: 146/255, alpha: 1.0).CGColor
+        btnDone.layer.shadowOffset = CGSizeMake(5.0, 5.0)
+        btnDone.layer.shadowOpacity = 1.0
+        btnDone.layer.masksToBounds = false
+    }
     func mapRelatedSettings(){
         mapView.delegate = self
         mapView.myLocationEnabled = true
@@ -112,6 +116,34 @@ class BaselocationViewController: UIViewController, GMSMapViewDelegate, UISearch
         self.view.addSubview(mapView)
         mapView.addSubview(btnDone)
         mapView.addSubview(btnSkip)
+        
+    }
+    func displayMerchantImage()
+    {
+        let imageName = self.appDelegate.MerchantImageUrlString
+        let url = NSURL(string: imageName)
+        let request: NSURLRequest = NSURLRequest(URL: url!)
+        let mainQueue = NSOperationQueue.mainQueue()
+        NSURLConnection.sendAsynchronousRequest(request, queue: mainQueue, completionHandler: { (response, data, error) -> Void in
+            if error == nil {
+                // Convert the downloaded data in to a UIImage object
+                let image = UIImage(data: data!)
+                // Store the image in to our cache
+                // Update the cell
+                dispatch_async(dispatch_get_main_queue(), {
+                    // if let cellToUpdate = menuCV.cellForRowAtIndexPath(indexPath) as? menuCollectionViewCell {
+                    // cellToUpdate.imageView?.image = image
+                    self.merchantImageView.image = image
+                    
+                    // }
+                })
+                
+            }
+            else {
+                print("Error: \(error!.localizedDescription)")
+            }
+        })
+        
         
     }
     func  getUserDetails()

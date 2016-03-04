@@ -93,7 +93,7 @@ class LoginViewController: UIViewController, FBSDKLoginButtonDelegate, GIDSignIn
         // checkLoggedInUser()
         // toggleAuthUI()
         Delegate()
-        // waste comment
+        
         numberToolbar.barStyle = UIBarStyle.BlackTranslucent
         numberToolbar.items=[
             UIBarButtonItem(title: "Return", style: UIBarButtonItemStyle.Bordered,target: self, action: "DismissKeyBoard"),

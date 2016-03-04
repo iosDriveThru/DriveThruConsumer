@@ -17,6 +17,7 @@ class MyPageViewController: UIViewController {
     @IBOutlet var lblUserName: UILabel!
     @IBOutlet var lblMailId: UILabel!
     @IBOutlet var btnToken: UIButton!
+    @IBOutlet var merchantImageView: UIImageView!
     
     
     override func viewDidLoad() {
@@ -30,7 +31,7 @@ class MyPageViewController: UIViewController {
         imgUserProfileImage.layer.cornerRadius = self.imgUserProfileImage.frame.size.width / 2
         imgUserProfileImage.clipsToBounds = true
         getUserDetails()
-        
+        displayMerchantImage()
         if orderVC.isOrderPlaced == true
         {
            btnToken.setImage(UIImage(named: "Token.png"), forState: .Normal)
@@ -79,8 +80,37 @@ class MyPageViewController: UIViewController {
             print("Could not fetch \(error), \(error.userInfo)")
         }
     }
+    func displayMerchantImage()
+    {
+        let imageName = self.appDelegate.MerchantImageUrlString
+        let url = NSURL(string: imageName)
+        let request: NSURLRequest = NSURLRequest(URL: url!)
+        let mainQueue = NSOperationQueue.mainQueue()
+        NSURLConnection.sendAsynchronousRequest(request, queue: mainQueue, completionHandler: { (response, data, error) -> Void in
+            if error == nil {
+                // Convert the downloaded data in to a UIImage object
+                let image = UIImage(data: data!)
+                // Store the image in to our cache
+                // Update the cell
+                dispatch_async(dispatch_get_main_queue(), {
+                    // if let cellToUpdate = menuCV.cellForRowAtIndexPath(indexPath) as? menuCollectionViewCell {
+                    // cellToUpdate.imageView?.image = image
+                    self.merchantImageView.image = image
+                    
+                    // }
+                })
+                
+            }
+            else {
+                print("Error: \(error!.localizedDescription)")
+            }
+        })
+        
+        
+    }
     
 }
+
 /*
 // MARK: - Navigation
 

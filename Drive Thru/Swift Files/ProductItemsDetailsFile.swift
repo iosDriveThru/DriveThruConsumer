@@ -70,7 +70,7 @@ public struct SetPreference: Encodable {
     
     public func toJSON() -> JSON? {
         return jsonify([
-            "preference" ~~> self.setPreference,
+            "preferences" ~~> self.setPreference,
             "Consumer_ID" ~~> self.Consumer_ID,
             "Merchant_ID" ~~> self.Merchant_ID
             ])

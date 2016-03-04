@@ -19,6 +19,7 @@ class UserTokenViewController: UIViewController {
     var OrderId:String = ""
     var displayOrderId:String = ""
     var shapeLayer = CAShapeLayer()
+    let defaults = NSUserDefaults.standardUserDefaults()
     var appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
     var mapVC = MapViewController()
     // var consumerId:int
@@ -43,11 +44,13 @@ class UserTokenViewController: UIViewController {
     @IBOutlet var btnRatingStar3: UIButton!
     @IBOutlet var btnRatingStar4: UIButton!
     @IBOutlet var btnRatingStar5: UIButton!
-    @IBOutlet var viewToken: UIView!
+    @IBOutlet weak var viewToken: UIView!
+    @IBOutlet var merchantImageView: UIImageView!
     override func viewDidLoad() {
         super.viewDidLoad()
         
         // Do any additional setup after loading the view.
+        displayMerchantImage()
         lblDisplayTokenId.text = TokenId
         lblDisplayOrderId.text = OrderId
         status = "placed"
@@ -57,7 +60,7 @@ class UserTokenViewController: UIViewController {
 //        }
         self.setLabelCornerRadius()
         self.pushNotification()
-        lblAddress.text = mapVC.StoreAddress
+        lblAddress.text = defaults.objectForKey("StoreAddress") as? String
         if appDelegate.isPreferenceChanged
         {
             DataManager.setPreference()
@@ -69,6 +72,38 @@ class UserTokenViewController: UIViewController {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
+    
+    func displayMerchantImage()
+    {
+        let imageName = self.appDelegate.MerchantImageUrlString
+        let url = NSURL(string: imageName)
+        let request: NSURLRequest = NSURLRequest(URL: url!)
+        let mainQueue = NSOperationQueue.mainQueue()
+        NSURLConnection.sendAsynchronousRequest(request, queue: mainQueue, completionHandler: { (response, data, error) -> Void in
+            if error == nil {
+                // Convert the downloaded data in to a UIImage object
+                let image = UIImage(data: data!)
+                // Store the image in to our cache
+                // Update the cell
+                dispatch_async(dispatch_get_main_queue(), {
+                    // if let cellToUpdate = menuCV.cellForRowAtIndexPath(indexPath) as? menuCollectionViewCell {
+                    // cellToUpdate.imageView?.image = image
+                    self.merchantImageView.image = image
+                    
+                    // }
+                })
+                
+            }
+            else {
+                print("Error: \(error!.localizedDescription)")
+            }
+        })
+        
+        
+    }
+
+    
+    
     func setLabelCornerRadius(){
         lblOrderId.layer.borderWidth = 1.0
         lblOrderId.layer.cornerRadius = 5.0

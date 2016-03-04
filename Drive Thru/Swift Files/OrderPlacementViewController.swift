@@ -35,6 +35,7 @@ class OrderPlacementViewController: UIViewController, UICollectionViewDelegate, 
     @IBOutlet weak var lblTotalPriceCart: UILabel!
     
     
+    @IBOutlet var merchantImageView: UIImageView!
     
     
     
@@ -86,7 +87,7 @@ class OrderPlacementViewController: UIViewController, UICollectionViewDelegate, 
         btnPlaceOrder.layer.cornerRadius = 5.0
         
         btnPlaceOrder.layer.borderColor = UIColor(red: 21/255, green: 126/255, blue: 251/255, alpha: 1.0).CGColor
-        
+        displayMerchantImage()
         
         
         if let mailid: String = defaults.objectForKey("userMailId") as? String
@@ -166,7 +167,7 @@ class OrderPlacementViewController: UIViewController, UICollectionViewDelegate, 
             
         {
             
-            DataManager.setPreference()
+          //  DataManager.setPreference()
             
         }
         
@@ -206,6 +207,36 @@ class OrderPlacementViewController: UIViewController, UICollectionViewDelegate, 
         
     }
     
+    
+    
+    func displayMerchantImage()
+    {
+        let imageName = self.appDelegate.MerchantImageUrlString
+        let url = NSURL(string: imageName)
+        let request: NSURLRequest = NSURLRequest(URL: url!)
+        let mainQueue = NSOperationQueue.mainQueue()
+        NSURLConnection.sendAsynchronousRequest(request, queue: mainQueue, completionHandler: { (response, data, error) -> Void in
+            if error == nil {
+                // Convert the downloaded data in to a UIImage object
+                let image = UIImage(data: data!)
+                // Store the image in to our cache
+                // Update the cell
+                dispatch_async(dispatch_get_main_queue(), {
+                    // if let cellToUpdate = menuCV.cellForRowAtIndexPath(indexPath) as? menuCollectionViewCell {
+                    // cellToUpdate.imageView?.image = image
+                    self.merchantImageView.image = image
+                    
+                    // }
+                })
+                
+            }
+            else {
+                print("Error: \(error!.localizedDescription)")
+            }
+        })
+        
+        
+    }
     
     
     
@@ -2177,31 +2208,32 @@ class OrderPlacementViewController: UIViewController, UICollectionViewDelegate, 
         
         
         
-        //        var itemAlreadyExists = false
-        
-        //        if (!self.appDelegate.preferenceJson.products.isEmpty)
-        
-        //        {
-        
-        //        for index in 0...self.appDelegate.preferenceJson.products.count-1
-        
-        //        {
-        
-        //            if object.productId == self.appDelegate.preferenceJson.products[index].productId
-        
-        //            {
-        
-        //             itemAlreadyExists = true
-        
-        //            }
-        
-        //        }
-        
-        //        }
-        
-        //        if(itemAlreadyExists == false)
-        
-        //        {
+        if object.CustomizationAvailable == true
+            
+        {
+            
+            for index in 0...object.customizationDetails.CustomizationcategoryDetails.count-1
+                
+            {
+                
+                for indexInside in 0...object.customizationDetails.CustomizationcategoryDetails[index].CategoryValue.count-1
+                    
+                {
+                    
+                    if (object.customizationDetails.CustomizationcategoryDetails[index].CategoryValue[indexInside].customisationIsSelected)
+                        
+                    {
+                        
+                        object.setCustomization.append(selectedCustomization(catId:object.customizationDetails.CustomizationcategoryDetails[index].CategoryValue[indexInside].customizationCatID ,catName: object.customizationDetails.CustomizationcategoryDetails[index].CategoryValue[indexInside].CategoryValueName, storeAliasName: object.customizationDetails.CustomizationcategoryDetails[index].CategoryValue[indexInside].StoreAliasName, IdCustValueAlias: object.customizationDetails.CustomizationcategoryDetails[index].CategoryValue[indexInside].IdCustomizationValueAlias, price: object.customizationDetails.CustomizationcategoryDetails[index].CategoryValue[indexInside].CustomizationPrice, selected: object.customizationDetails.CustomizationcategoryDetails[index].CategoryValue[indexInside].customisationIsSelected))
+                        
+                    }
+                    
+                }
+                
+            }
+            
+        }
+
         
         
         
@@ -2296,6 +2328,20 @@ class OrderPlacementViewController: UIViewController, UICollectionViewDelegate, 
                 self.appDelegate.preferenceJson.products.removeAtIndex(Index)
                 
                 self.menuCV.reloadData()
+                if self.setSourceType == "Preference"
+                {
+                if self.appDelegate.preferenceJson.products.isEmpty
+                {
+                    let label:UILabel = UILabel(frame: CGRectMake(0, 0, 300, 30))
+                    label.center = CGPointMake(self.menuCV.frame.size.width/2, self.menuCV.frame.size.height/2)
+                    label.textAlignment = NSTextAlignment.Center
+                    // label.textColor = UIColor.
+                    label.text = "Add Item To Preference"
+                    self.menuCV.addSubview(label)
+                    self.menuCV.bringSubviewToFront(label)
+                    
+                }
+                }
                 
                 // if yes
                 
@@ -2350,6 +2396,10 @@ class OrderPlacementViewController: UIViewController, UICollectionViewDelegate, 
         if setSourceType == "Preference"
             
         {
+            let subViews = self.menuCV.subviews
+            for subview in subViews{
+                subview.removeFromSuperview()
+            }
             
             setSourceType = "Menu"
             
@@ -2372,6 +2422,17 @@ class OrderPlacementViewController: UIViewController, UICollectionViewDelegate, 
             lblTopBarMenu.text = "Preference"
             
             self.menuCV.reloadData()
+            if appDelegate.preferenceJson.products.isEmpty
+            {
+                let label:UILabel = UILabel(frame: CGRectMake(0, 0, 300, 30))
+                label.center = CGPointMake(self.menuCV.frame.size.width/2, self.menuCV.frame.size.height/2)
+                label.textAlignment = NSTextAlignment.Center
+               // label.textColor = UIColor.
+                label.text = "Add Item To Preference"
+                self.menuCV.addSubview(label)
+                self.menuCV.bringSubviewToFront(label)
+                
+            }
             
         }
         
@@ -2475,7 +2536,7 @@ class OrderPlacementViewController: UIViewController, UICollectionViewDelegate, 
         
         let options = ["amount" : "\(Int(self.totalAmount))00", "currency": "INR", "name": "DriveThru", "description": "Starbucks",
             
-            "image": "http://worksdesigngroup.com/wp-content/uploads/2015/02/12.png",
+            "image": appDelegate.MerchantImageUrlString,
             
             "prefill": ["email": self.userMail,
                 
@@ -2491,9 +2552,14 @@ class OrderPlacementViewController: UIViewController, UICollectionViewDelegate, 
     
     func onPaymentSuccess(payment_id: String){
         
+        let blurEffect = UIBlurEffect(style: UIBlurEffectStyle.ExtraLight)
+        let blurEffectView = UIVisualEffectView(effect: blurEffect)
+        blurEffectView.frame = view.bounds
+        blurEffectView.autoresizingMask = [.FlexibleWidth, .FlexibleHeight] // for supporting device rotation
+        view.addSubview(blurEffectView)
         
         indicator.center = view.center
-        view.addSubview(indicator)
+        blurEffectView.addSubview(indicator)
         indicator.bringSubviewToFront(view)
         UIApplication.sharedApplication().networkActivityIndicatorVisible = true
         self.view.userInteractionEnabled = false
@@ -2736,17 +2802,7 @@ extension OrderPlacementViewController: UIScrollViewDelegate {
         
     }
     
-}
-extension UIImageView{
-    func vibrate(){
-        let animation = CABasicAnimation(keyPath: "position")
-        animation.duration = 0.05
-        animation.repeatCount = 5
-        animation.autoreverses = true
-        animation.fromValue = NSValue(CGPoint: CGPointMake(self.center.x - 2.0, self.center.y))
-        animation.toValue = NSValue(CGPoint: CGPointMake(self.center.x + 2.0, self.center.y))
-        self.layer.addAnimation(animation, forKey: "position")
-    }
+    
 }
 
 
