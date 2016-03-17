@@ -18,7 +18,44 @@ class MyPageViewController: UIViewController {
     @IBOutlet var lblMailId: UILabel!
     @IBOutlet var btnToken: UIButton!
     @IBOutlet var merchantImageView: UIImageView!
+    @IBOutlet var btnTokenMenu: UIButton!
     
+    @IBAction func ClickTokenMenu(sender: AnyObject) {
+        self.appDelegate.cartJson.products = []
+        if btnTokenMenu.currentImage  == UIImage(named: "Token.png")
+        {
+            
+            self.performSegueWithIdentifier("segueMyProfileToToken", sender: self)
+        }
+        else
+            
+        {
+            
+            let alertController = UIAlertController(title: "Drive-Thru", message: "No Active Token!", preferredStyle: .Alert)
+            
+            // Create the actions
+            
+            let okAction = UIAlertAction(title: "OK", style: UIAlertActionStyle.Default)
+                
+                {
+                    
+                    UIAlertAction in
+                    
+            }
+            
+            
+            
+            // Add the actions
+            
+            alertController.addAction(okAction)
+            
+            // Present the controller
+            
+            self.presentViewController(alertController, animated: true, completion: nil)
+            
+        }
+        
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -32,9 +69,12 @@ class MyPageViewController: UIViewController {
         imgUserProfileImage.clipsToBounds = true
         getUserDetails()
         displayMerchantImage()
-        if orderVC.isOrderPlaced == true
+        if let orderProgress:Bool = defaults.objectForKey("isOrderInProgress") as? Bool
         {
-           btnToken.setImage(UIImage(named: "Token.png"), forState: .Normal)
+            if orderProgress == true
+            {
+                btnToken.setImage(UIImage(named: "Token.png"), forState: .Normal)
+            }
         }
     }
     

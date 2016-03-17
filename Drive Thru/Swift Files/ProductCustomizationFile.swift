@@ -66,10 +66,7 @@ public struct CustomizationCategoryValue: Decodable, Encodable {
     public var customizationCatID:Int
    // public var preferenceAliasId:Int
    
-    
-  
-    
-    public init?(json: JSON) {
+      public init?(json: JSON) {
         self.CategoryValueName = ("category_value_name" <~~ json)!
         self.StoreAliasName = ("store_alias_name" <~~ json)!
         self.IdCustomizationValueAlias = ("id_customization_value_alias" <~~ json)!
@@ -110,19 +107,7 @@ public struct CustomizationCategoryValue: Decodable, Encodable {
             return nil
         }
     }
-    
-    
-    
-    
 }
-
-
-
-
-
-
-
-
 
 public struct selectedCustomization: Encodable{
     
@@ -156,9 +141,5 @@ public struct selectedCustomization: Encodable{
                
                 ])
         }
-    
-    
-    
-    
-}
+ }
 

@@ -35,6 +35,7 @@ class MyStoresViewController: UIViewController , GMSMapViewDelegate, UISearchBar
     @IBOutlet var searchBar: UISearchBar!
     @IBOutlet var txtShopName: UITextField!
     @IBOutlet var merchantImageView: UIImageView!
+    let defaults = NSUserDefaults.standardUserDefaults()
     
     
     override func viewDidLoad() {
@@ -49,9 +50,12 @@ class MyStoresViewController: UIViewController , GMSMapViewDelegate, UISearchBar
         getStoreDetails()
         displayMerchantImage()
         txtShopName.delegate = self
-        if orderVC.isOrderPlaced == true
+        if let orderProgress:Bool = defaults.objectForKey("isOrderInProgress") as? Bool
         {
+            if orderProgress == true
+            {
             btnToken.setImage(UIImage(named: "Token.png"), forState: .Normal)
+            }
         }
      }
     

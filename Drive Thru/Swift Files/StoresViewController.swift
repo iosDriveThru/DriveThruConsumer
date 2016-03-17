@@ -98,17 +98,39 @@ class StoresViewController: UIViewController {
             if let menu = Menu(json: json)
             {
                 self.appDelegate.menuJson = menu
-                for index in 0...self.appDelegate.menuJson.products.count-1
+                if !self.appDelegate.menuJson.products.isEmpty
                 {
-                    self.appDelegate.menuJson.products[index].SourceType = "\(index)_Menu"
-                    self.appDelegate.menuJson.products[index].productImage = self.appDelegate.menuJson.products[index].productImage.stringByReplacingOccurrencesOfString("upload", withString: "upload/h_300,w_300,r_10")
-                    self.appDelegate.menuJson.products[index].productImage = self.appDelegate.menuJson.products[index].productImage.stringByReplacingOccurrencesOfString("jpg", withString: "png")
+                    for index in 0...self.appDelegate.menuJson.products.count-1
+                    {
+                        self.appDelegate.menuJson.products[index].SourceType = "\(index)_Menu"
+                        self.appDelegate.menuJson.products[index].productImage = self.appDelegate.menuJson.products[index].productImage.stringByReplacingOccurrencesOfString("upload", withString: "upload/h_300,w_300,r_10")
+                        self.appDelegate.menuJson.products[index].productImage = self.appDelegate.menuJson.products[index].productImage.stringByReplacingOccurrencesOfString("jpg", withString: "png")
+                        if !self.appDelegate.menuJson.products[index].customizationDetails.CustomizationcategoryDetails.isEmpty
+                        {
+                            for indexInside in 0...self.appDelegate.menuJson.products[index].customizationDetails.CustomizationcategoryDetails.count-1
+                            {
+                                for indexInside1 in 0...self.appDelegate.menuJson.products[index].customizationDetails.CustomizationcategoryDetails[indexInside].CategoryValue.count-1
+                                {
+                                    self.appDelegate.menuJson.products[index].customizationDetails.CustomizationcategoryDetails[indexInside].CategoryValue[indexInside1].customisationIsSelected = true
+                                    self.appDelegate.menuJson.products[index].isCustomized = true
+                                    
+                                }
+                                
+                                
+                            }
+                        }
+                        
+                        
+                        
+                    }
                 }
                 self.appDelegate.originalMenuJson = self.appDelegate.menuJson
                 dispatch_async(dispatch_get_main_queue(), {
                     self.performSegueWithIdentifier("segStoretoPreference", sender: self)
                 })
+                
             }
+
             else {
                 return
             }

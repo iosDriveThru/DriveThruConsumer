@@ -17,12 +17,13 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, GMSMapView
     let defaults = NSUserDefaults.standardUserDefaults()
     var currentLatitude:Double = 12.919687
     var currentLongitude:Double = 77.592188
-    var cameraZoom:Double = 17
+    var cameraZoom:Double = 18
     var manager: CLLocationManager?
     var StoreAddress:String!
     var MerchantImage:String = String()
     var MerchantDetails:String = String()
     var MerchantId:String = String()
+    var MerchantName:String = String()
     var StoreID:Int!
     //firebase
     var geofireRef:Firebase = Firebase(url: "https://blistering-torch-3715.firebaseio.com")
@@ -36,6 +37,7 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, GMSMapView
     var listener = [String : Firebase]()
     var spaces_cars_in_vicinity_dict:NSMutableDictionary = NSMutableDictionary()
     var appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
+    var markerPositions: [CLLocationCoordinate2D] = []
     
     //IBOutlet         //https://blistering-torch-3715.firebaseio.com/
     @IBOutlet var mapView: GMSMapView!
@@ -54,6 +56,7 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, GMSMapView
         mapRelatedSettings()
         CLLocationRegion()
         self.getstoresList()
+        self.appDelegate.cartJson.products = []
         if appDelegate.isPreferenceChanged
         {
             DataManager.setPreference()
@@ -131,6 +134,23 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, GMSMapView
         NSLog("\(error)")
     }
     
+    
+    
+     func setCameraToShowAllMarkers() {
+        let path = GMSMutablePath()
+        for index in 0...self.markerPositions.count-1
+        {
+            path.addCoordinate(markerPositions[index])
+            
+        }
+        
+        
+        
+        let bounds = GMSCoordinateBounds(path: path)
+        
+        self.mapView!.animateWithCameraUpdate(GMSCameraUpdate.fitBounds(bounds, withPadding: 40.0))
+    }
+    
     //show stores marker on map
     func getstoresList(){
         
@@ -158,6 +178,7 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, GMSMapView
                     if let Merchant_Name:String = merchant.objectForKey("Merchant_Name") as? String
                     {
                         MerchantName = Merchant_Name
+                        self.MerchantName = Merchant_Name
                     }
                     let StoreArray = merchant.objectForKey("Store_Array") as! NSMutableArray
                     for storeArrayIndex in 0...StoreArray.count-1{
@@ -183,11 +204,13 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, GMSMapView
                         }
                        
                             
-                            self.MerchantDetails = "\(self.MerchantId)|\(self.MerchantImage)"
+                            self.MerchantDetails = "\(self.MerchantId)|\(self.MerchantImage)|\(self.MerchantName)"
                             self.addMarkerforStore(Store_Latitude, storeLongitude: Store_Longitude, storeAddress: self.StoreAddress, merchantDetails: self.MerchantDetails)
+                       
                     }
+                    self.setCameraToShowAllMarkers()
                 }
-            })
+                     })
                 
             }
             catch {
@@ -202,10 +225,12 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, GMSMapView
     {
         let marker:GMSMarker = GMSMarker()
         marker.position = CLLocationCoordinate2DMake(storeLatitude, storeLongitude)
+        markerPositions.append(marker.position)
         marker.snippet = storeAddress
         marker.title = merchantDetails
         var arrayOfMerchantDetails = merchantDetails.characters.split{$0=="|"}.map(String.init)
         let storeImageName = arrayOfMerchantDetails[1]
+        
         let url = NSURL(string: storeImageName)
         let imageData = NSData(contentsOfURL: url!)
         marker.icon = resizeImage(UIImage(data: imageData!)!, scaledToSize: CGSizeMake(30,30))
@@ -257,10 +282,14 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, GMSMapView
         
     }
     func mapView(mapView: GMSMapView!, didTapInfoWindowOfMarker marker: GMSMarker!) {
-        self.defaults.setValue(marker.snippet, forKey: "StoreAddress")
+        let xmarkersnippet: String = marker.snippet
+        
+        //defaults.setObject(xmarkersnippet, forKey: "StoreDetails")
         var arrayOfMerchantDetails = marker.title.characters.split{$0=="|"}.map(String.init)
         self.appDelegate.MerchantId = arrayOfMerchantDetails[0]
         self.appDelegate.MerchantImageUrlString = arrayOfMerchantDetails[1]
+        self.appDelegate.MerchantName = arrayOfMerchantDetails[2]
+        defaults.setObject("\(xmarkersnippet)|\(arrayOfMerchantDetails[1])", forKey: "StoreDetails")
         getMerchantPreferenceitems(Int(self.appDelegate.MerchantId)!)
         getMerchantMenuitems(Int(self.appDelegate.MerchantId)!)
         
@@ -421,6 +450,22 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, GMSMapView
                     self.appDelegate.menuJson.products[index].SourceType = "\(index)_Menu"
                     self.appDelegate.menuJson.products[index].productImage = self.appDelegate.menuJson.products[index].productImage.stringByReplacingOccurrencesOfString("upload", withString: "upload/h_300,w_300,r_10")
                     self.appDelegate.menuJson.products[index].productImage = self.appDelegate.menuJson.products[index].productImage.stringByReplacingOccurrencesOfString("jpg", withString: "png")
+                   if !self.appDelegate.menuJson.products[index].customizationDetails.CustomizationcategoryDetails.isEmpty
+                   {
+                    for indexInside in 0...self.appDelegate.menuJson.products[index].customizationDetails.CustomizationcategoryDetails.count-1
+                    {
+                        for indexInside1 in 0...self.appDelegate.menuJson.products[index].customizationDetails.CustomizationcategoryDetails[indexInside].CategoryValue.count-1
+                        {
+                           self.appDelegate.menuJson.products[index].customizationDetails.CustomizationcategoryDetails[indexInside].CategoryValue[indexInside1].customisationIsSelected = false
+                            
+                        }
+                        
+                        
+                    }
+                    }
+                    
+                    
+               
                 }
                 }
                 self.appDelegate.originalMenuJson = self.appDelegate.menuJson
@@ -457,6 +502,7 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, GMSMapView
             if let pref = Preference(json: json)
             {
                 self.appDelegate.preferenceJson = pref
+                print(self.appDelegate.preferenceJson)
                 if !self.appDelegate.preferenceJson.products.isEmpty
                 {
                 for outsideIndex in 0...self.appDelegate.preferenceJson.products.count-1
@@ -493,4 +539,3 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, GMSMapView
         }
     }
 }
-

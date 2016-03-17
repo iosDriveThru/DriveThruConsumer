@@ -16,10 +16,11 @@
 		28EC3CBB1C32682000D707D7 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 28EC3CB91C32682000D707D7 /* LaunchScreen.storyboard */; };
 		28EC3CC61C32682100D707D7 /* Drive_ThruTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28EC3CC51C32682100D707D7 /* Drive_ThruTests.swift */; };
 		28EC3CD11C32682100D707D7 /* Drive_ThruUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28EC3CD01C32682100D707D7 /* Drive_ThruUITests.swift */; };
+		9A0033EA1C981294007C4865 /* OrderedItemTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A0033E91C981294007C4865 /* OrderedItemTableViewCell.swift */; };
 		9A13085B1C560F900029AEFF /* Validation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A13085A1C560F900029AEFF /* Validation.swift */; };
 		9A2480371C842C9E00C0BF07 /* BaselocationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A2480361C842C9E00C0BF07 /* BaselocationViewController.swift */; };
 		9A2480391C84501B00C0BF07 /* MyStoresViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A2480381C84501B00C0BF07 /* MyStoresViewController.swift */; };
-		9A54D5A01C5B40F100010D41 /* cartProductDetails.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A54D59F1C5B40F100010D41 /* cartProductDetails.swift */; };
+		9A54D5A01C5B40F100010D41 /* OrderedProductDetails.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A54D59F1C5B40F100010D41 /* OrderedProductDetails.swift */; };
 		9A54D5A41C5B42F300010D41 /* Razorpay.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9A54D5A31C5B42F300010D41 /* Razorpay.framework */; };
 		9A54D5A91C5B449100010D41 /* UnselectedPreference.png in Resources */ = {isa = PBXBuildFile; fileRef = 9A54D5A51C5B449100010D41 /* UnselectedPreference.png */; };
 		9A54D5AB1C5B449100010D41 /* Customize_Selected.png in Resources */ = {isa = PBXBuildFile; fileRef = 9A54D5A71C5B449100010D41 /* Customize_Selected.png */; };
@@ -126,10 +127,11 @@
 		28EC3CD01C32682100D707D7 /* Drive_ThruUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Drive_ThruUITests.swift; sourceTree = "<group>"; };
 		28EC3CD21C32682100D707D7 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		6253EE82C0C4EA53480F86C5 /* Pods.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		9A0033E91C981294007C4865 /* OrderedItemTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = OrderedItemTableViewCell.swift; path = "Swift Files/OrderedItemTableViewCell.swift"; sourceTree = "<group>"; };
 		9A13085A1C560F900029AEFF /* Validation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Validation.swift; path = "Swift Files/Validation.swift"; sourceTree = "<group>"; };
 		9A2480361C842C9E00C0BF07 /* BaselocationViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = BaselocationViewController.swift; path = "Swift Files/BaselocationViewController.swift"; sourceTree = "<group>"; };
 		9A2480381C84501B00C0BF07 /* MyStoresViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = MyStoresViewController.swift; path = "Swift Files/MyStoresViewController.swift"; sourceTree = "<group>"; };
-		9A54D59F1C5B40F100010D41 /* cartProductDetails.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = cartProductDetails.swift; path = "Swift Files/cartProductDetails.swift"; sourceTree = "<group>"; };
+		9A54D59F1C5B40F100010D41 /* OrderedProductDetails.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = OrderedProductDetails.swift; path = "Swift Files/OrderedProductDetails.swift"; sourceTree = "<group>"; };
 		9A54D5A31C5B42F300010D41 /* Razorpay.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Razorpay.framework; sourceTree = "<group>"; };
 		9A54D5A51C5B449100010D41 /* UnselectedPreference.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = UnselectedPreference.png; path = Images/UnselectedPreference.png; sourceTree = "<group>"; };
 		9A54D5A71C5B449100010D41 /* Customize_Selected.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = Customize_Selected.png; path = Images/Customize_Selected.png; sourceTree = "<group>"; };
@@ -247,7 +249,6 @@
 				28091D891C32767B003B7A8E /* AppDelegate.swift */,
 				9A2480361C842C9E00C0BF07 /* BaselocationViewController.swift */,
 				AC69AC8D1C4F4EF600C6DD49 /* cartCollectionViewCell.swift */,
-				9A54D59F1C5B40F100010D41 /* cartProductDetails.swift */,
 				9AB7E8A91C63552C00DAE96F /* CustomInfoWindow.swift */,
 				9ABDA2301C60AE3500C0134D /* customization */,
 				9ABC36071C60783100B2FD05 /* DataManager.swift */,
@@ -256,6 +257,8 @@
 				AC69AC8B1C4F4EC600C6DD49 /* menuCollectionViewCell.swift */,
 				9ADDF8FE1C37F0DF00952C6C /* MyPageViewController.swift */,
 				9A2480381C84501B00C0BF07 /* MyStoresViewController.swift */,
+				9A0033E91C981294007C4865 /* OrderedItemTableViewCell.swift */,
+				9A54D59F1C5B40F100010D41 /* OrderedProductDetails.swift */,
 				AC6B4D841C4E4A6C002622D1 /* OrderPlacementViewController.swift */,
 				AC115D641C718F8E003ABA10 /* PreferenceViewController.swift */,
 				9AB7E8A71C63552C00DAE96F /* ProductCustomizationFile.swift */,
@@ -656,7 +659,8 @@
 				28091D8A1C32767B003B7A8E /* AppDelegate.swift in Sources */,
 				28EC3CB61C32682000D707D7 /* Drive_Thru.xcdatamodeld in Sources */,
 				9AB7E8AA1C63552C00DAE96F /* ProductCustomizationFile.swift in Sources */,
-				9A54D5A01C5B40F100010D41 /* cartProductDetails.swift in Sources */,
+				9A0033EA1C981294007C4865 /* OrderedItemTableViewCell.swift in Sources */,
+				9A54D5A01C5B40F100010D41 /* OrderedProductDetails.swift in Sources */,
 				ACF52BD51C523B4D00E3F07E /* customizationViewController.swift in Sources */,
 				9ADDF8FD1C37F0BC00952C6C /* MapViewController.swift in Sources */,
 				9AC7B70C1C7AE2F4007AEC62 /* StoresViewController.swift in Sources */,

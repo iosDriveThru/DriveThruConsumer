@@ -8,26 +8,23 @@
 
 import UIKit
 import PusherSwift
-class UserTokenViewController: UIViewController {
+import CoreLocation
+class UserTokenViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
     
     var status:String!
     var isImageChange:[Bool] = [false, false, false, false, false]
     var noImageClicked:Bool = false
     var rating:Float = 0.0
     var consumerId:String = String()
-    var TokenId:String = ""
     var OrderId:String = ""
     var displayOrderId:String = ""
     var shapeLayer = CAShapeLayer()
     let defaults = NSUserDefaults.standardUserDefaults()
     var appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
     var mapVC = MapViewController()
+
     // var consumerId:int
     @IBOutlet var imgPickedUp: UIImageView!
-    @IBOutlet var imgGreenPickupReady: UIImageView!
-    @IBOutlet var imgGreenOrderPlaced: UIImageView!
-    @IBOutlet var imgGreenPreparation: UIImageView!
-    @IBOutlet var imgGreenKiosk: UIImageView!
     @IBOutlet var imgShopImage: UIImageView!
     @IBOutlet var lblAddress: UILabel!
     @IBOutlet var lblOrderId: UILabel!
@@ -44,35 +41,70 @@ class UserTokenViewController: UIViewController {
     @IBOutlet var btnRatingStar3: UIButton!
     @IBOutlet var btnRatingStar4: UIButton!
     @IBOutlet var btnRatingStar5: UIButton!
-    @IBOutlet weak var viewToken: UIView!
+    @IBOutlet var viewToken: UIView!
     @IBOutlet var merchantImageView: UIImageView!
+    @IBOutlet var orderedListView: UIView!
+    @IBOutlet var tableView: UITableView!
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        if let order:OrderedDetails = self.defaults.objectForKey("OrderedProductDetails") as? OrderedDetails{
+            print(order)
+            
+        }
         // Do any additional setup after loading the view.
+        let storeDetailsArray = defaults.objectForKey("StoreDetails") as? String
+        var arrayOfMerchantDetails = storeDetailsArray!.characters.split{$0=="|"}.map(String.init)
+        lblAddress.text = arrayOfMerchantDetails[0]
+        self.appDelegate.MerchantImageUrlString = arrayOfMerchantDetails[1]
+        print(storeDetailsArray)
+        print(arrayOfMerchantDetails[1])
+        print(self.appDelegate.MerchantImageUrlString )
+        if let token = defaults.objectForKey("tokenID")
+        {
+           lblDisplayTokenId.text = token as? String
+        }
+        if let order = defaults.objectForKey("orderID")
+        {
+            lblDisplayOrderId.text = order as? String
+            self.OrderId = (order as? String)!
+        }
+        
         displayMerchantImage()
-        lblDisplayTokenId.text = TokenId
-        lblDisplayOrderId.text = OrderId
         status = "placed"
 //        imgOrderPlaced.image = UIImage(named:"OrderPlaced_green.png")
 //        if imgOrderPlaced.image == UIImage(named: "OrderPlaced_green.png"){
 //            imgOrderPlaced.frame = CGRectMake(self.view.frame.origin.x/2, 522, 180, 180)
 //        }
         self.setLabelCornerRadius()
-        self.pushNotification()
-        lblAddress.text = defaults.objectForKey("StoreAddress") as? String
+       pushNotification()
+        defaults.addObserver(self, forKeyPath: "pusherValueChanged", options: NSKeyValueObservingOptions.New, context: nil)
+        
+        
         if appDelegate.isPreferenceChanged
         {
             DataManager.setPreference()
         }
-        // consumerId = (defaults.objectForKey("user_ID") as? String)!
-    }
+        appDelegate.pushNotification()
+        tableView.delegate = self
+        tableView.dataSource = self
+        
+       
+       }
+
     
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
     
+    @IBAction func btnShowOrderedItems_Click(sender: AnyObject) {
+        animationAppear()
+         }
+    @IBAction func btnOk_Click(sender: AnyObject) {
+       animationDisappear()
+        
+    }
     func displayMerchantImage()
     {
         let imageName = self.appDelegate.MerchantImageUrlString
@@ -89,6 +121,7 @@ class UserTokenViewController: UIViewController {
                     // if let cellToUpdate = menuCV.cellForRowAtIndexPath(indexPath) as? menuCollectionViewCell {
                     // cellToUpdate.imageView?.image = image
                     self.merchantImageView.image = image
+                    self.imgShopImage.image = image
                     
                     // }
                 })
@@ -102,7 +135,25 @@ class UserTokenViewController: UIViewController {
         
     }
 
-    
+    func animationAppear(){
+       
+        orderedListView.alpha = 0.5
+        orderedListView.frame = CGRectMake(self.view.frame.size.width,self.view.frame.size.height,0,0)
+        orderedListView.hidden = false
+        self.view.addSubview(orderedListView)
+        UIView.animateWithDuration(0.3, delay: 0.0, options: .CurveEaseIn , animations: {
+            self.orderedListView .alpha = 1.0
+            self.orderedListView.frame = CGRectMake(self.view.frame.origin.x, self.view.frame.origin.y, self.view.frame.size.width, self.view.frame.size.height)
+            }, completion: {(finished:Bool) in
+        })
+    }
+    func animationDisappear(){
+         UIView.animateWithDuration(0.3, delay: 0.0, options: .CurveEaseIn , animations: {
+            self.orderedListView .alpha = 0.5
+            self.orderedListView.frame = CGRectMake(self.view.frame.size.width,self.view.frame.size.height,0,0)
+           }, completion: {(finished:Bool) in
+        })
+    }
     
     func setLabelCornerRadius(){
         lblOrderId.layer.borderWidth = 1.0
@@ -138,11 +189,12 @@ class UserTokenViewController: UIViewController {
     }
     func pushNotification()
     {
-        let pusher = Pusher(key: "1f006f9bd40000fbe5e8", options: ["secret": "118ce01e86e2ff6aa374"])
-        pusher.connect()
-        let chan = pusher.subscribe("consumer_10")
-        chan.bind("consumer_event", callback: { (data: AnyObject?) -> Void in
-            if let vstatus = data?.objectForKey("order_status") as? String
+        var data:AnyObject?
+        if let value = defaults.objectForKey("pusherValueChanged")
+        {
+            data = value
+        }
+        if let vstatus = data?.objectForKey("order_status") as? String
             {
                 self.status = vstatus
             }
@@ -156,6 +208,7 @@ class UserTokenViewController: UIViewController {
             if self.displayOrderId  == self.OrderId{
                 switch self.status
                 {                case "placed":
+                    self.defaults.setBool(true, forKey: "isOrderInProgress")
                     self.imgOrderPlaced.image = UIImage(named: "OrderPlaced_green.png")
                     self.imgKioskReady.image = UIImage(named: "forDelivery.png")
                     self.imgPreparation.image = UIImage(named: "cooking.png")
@@ -166,6 +219,7 @@ class UserTokenViewController: UIViewController {
                     self.imgPickedUp.hidden = true
                     return
                 case "inprogress":
+                    self.defaults.setBool(true, forKey: "isOrderInProgress")
                     self.imgPreparation.image = UIImage(named: "Preparation_Green.png")
                     self.imgOrderPlaced.image = UIImage(named: "Cart.png")
                     self.imgKioskReady.image = UIImage(named: "forDelivery.png")
@@ -174,6 +228,7 @@ class UserTokenViewController: UIViewController {
                     self.imgPickedUp.hidden = true
                     return
                 case "for_delivery":
+                    self.defaults.setBool(true, forKey: "isOrderInProgress")
                     self.imgKioskReady.image = UIImage(named: "KioskReady_green.png")
                     self.imgPreparation.image = UIImage(named: "cooking.png")
                     self.imgOrderPlaced.image = UIImage(named: "Cart.png")
@@ -182,6 +237,7 @@ class UserTokenViewController: UIViewController {
                     //self.imgKioskReady.frame = CGRectMake(185, 517, 80, 80)
                     return
                 case "ready_to_pickup":
+                    self.defaults.setBool(true, forKey: "isOrderInProgress")
                     let localnotification = UILocalNotification()
                     localnotification.alertAction = "Drive Thru"
                     localnotification.alertBody = "Your order is ready to pickup"
@@ -198,6 +254,7 @@ class UserTokenViewController: UIViewController {
                     self.shapeLayer.contents = self.lblDisplayTokenId
                     return
                 default:
+                    self.defaults.setBool(false, forKey: "isOrderInProgress")
                     self.imgPickedUp.hidden = false
                     self.lblDisplayTokenId.addSubview(self.imgPickedUp)
                     self.imgPickupReady.image = UIImage(named: "ReadyForPickup3.png")
@@ -212,7 +269,7 @@ class UserTokenViewController: UIViewController {
                     self.btnRatingStar5.hidden = false
                 }
             }
-        })
+       
     }
     
     func resizeImage(image:UIImage, scaledToSize newSize:CGSize) -> UIImage{
@@ -359,5 +416,25 @@ class UserTokenViewController: UIViewController {
         noImageClicked=true
         
     }
+    
+    override func observeValueForKeyPath(keyPath: String?, ofObject object: AnyObject?, change: [String : AnyObject]?, context: UnsafeMutablePointer<Void>) {
+    
+        if keyPath == "pusherValueChanged"
+        {
+            self.pushNotification()
+        }
+    }
+    
+    func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
+       let cell = tableView.dequeueReusableCellWithIdentifier("cell", forIndexPath: indexPath) as! OrderedItemTableViewCell
+        cell.lblItem.text = appDelegate.orderedProductDetails.orderedProductDetails[0].orderedProduct[indexPath.row].productName
+        cell.lblQuantity.text = String(appDelegate.orderedProductDetails.orderedProductDetails[0].orderedProduct[indexPath.row].productQuantity)
+        return cell
+    }
+    func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return appDelegate.orderedProductDetails.orderedProductDetails[0].orderedProduct.count
+    }
+    
+    
     
 }

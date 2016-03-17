@@ -18,6 +18,10 @@ class customizationViewController: UIViewController,UITableViewDataSource, UITab
     var customCell:customTableViewCell = customTableViewCell()
     var isComingFromPreference:Bool = false
     var arrayCustomizationSelected:[Bool] = []
+    var fromSource:String = ""
+    var isCartCustomizationChanged:Bool = false
+    var CustomizationOfProductBefore:String = ""
+    var productSourceTypeBefore:String = ""
     
     @IBOutlet var merchantImageView: UIImageView!
     @IBOutlet var tableView: UITableView!
@@ -26,10 +30,11 @@ class customizationViewController: UIViewController,UITableViewDataSource, UITab
     @IBOutlet var btnComplete: UIButton!
     @IBOutlet var lblTotal: UILabel!
     @IBOutlet weak var lblProductName: UILabel!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        
         // Do any additional setup after loading the view, typically from a nib.
+        productSourceTypeBefore = (ProductCustomization?.SourceType)!
         displayMerchantImage()
         displayProductImage()
         tableView.dataSource = self
@@ -40,12 +45,33 @@ class customizationViewController: UIViewController,UITableViewDataSource, UITab
         lblProductName.text = ProductCustomization?.productName
         lblProductName.layer.cornerRadius = 6
         
+        for index in 0...(self.ProductCustomization?.customizationDetails.CustomizationcategoryDetails.count)!-1
+        {
+            for insideIndex in 0...(self.ProductCustomization?.customizationDetails.CustomizationcategoryDetails[index].CategoryValue.count)!-1
+            {
+                arrayCustomizationSelected.append((self.ProductCustomization?.customizationDetails.CustomizationcategoryDetails[index].CategoryValue[insideIndex].customisationIsSelected)!)
+                if self.ProductCustomization?.customizationDetails.CustomizationcategoryDetails[index].CategoryValue[insideIndex].customisationIsSelected == true
+                {
+                    
+                    
+                        CustomizationOfProductBefore = CustomizationOfProductBefore + "_\((self.ProductCustomization?.customizationDetails.CustomizationcategoryDetails[index].CategoryValue[insideIndex].StoreAliasName)!)"
+                    
+                    
+                }
+            }
+        }
+
+        
     }
+    
+    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
     
+    
+    //Function to Display Product item image
     func displayProductImage()
     {
         let imageName = ProductCustomization?.productImage
@@ -59,24 +85,17 @@ class customizationViewController: UIViewController,UITableViewDataSource, UITab
                 // Store the image in to our cache
                 // Update the cell
                 dispatch_async(dispatch_get_main_queue(), {
-                    // if let cellToUpdate = menuCV.cellForRowAtIndexPath(indexPath) as? menuCollectionViewCell {
-                    // cellToUpdate.imageView?.image = image
                     self.imgItem.image = image
-                    
-                    // }
                 })
-                
             }
             else {
                 print("Error: \(error!.localizedDescription)")
             }
         })
-        
-        
     }
+    //End- Function to Display Product item image
     
-    
-    
+    //Function to Display merchant image
     func displayMerchantImage()
     {
         let imageName = self.appDelegate.MerchantImageUrlString
@@ -87,14 +106,8 @@ class customizationViewController: UIViewController,UITableViewDataSource, UITab
             if error == nil {
                 // Convert the downloaded data in to a UIImage object
                 let image = UIImage(data: data!)
-                // Store the image in to our cache
-                // Update the cell
                 dispatch_async(dispatch_get_main_queue(), {
-                    // if let cellToUpdate = menuCV.cellForRowAtIndexPath(indexPath) as? menuCollectionViewCell {
-                    // cellToUpdate.imageView?.image = image
                     self.merchantImageView.image = image
-                    
-                    // }
                 })
                 
             }
@@ -102,10 +115,9 @@ class customizationViewController: UIViewController,UITableViewDataSource, UITab
                 print("Error: \(error!.localizedDescription)")
             }
         })
-        
-        
     }
-
+    //End- Function to Display merchant image
+    
     
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCellWithIdentifier("tableViewCell", forIndexPath: indexPath) as! customTableViewCell
@@ -224,6 +236,7 @@ extension customizationViewController: UICollectionViewDelegate, UICollectionVie
     }
     func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
         let cell : UICollectionViewCell = collectionView.cellForItemAtIndexPath(indexPath)!
+        isCartCustomizationChanged = true
         if self.ProductCustomization?.customizationDetails.CustomizationcategoryDetails[collectionView.tag].CategoryValue[indexPath.row].customisationIsSelected == false
         {
             let gradient: CAGradientLayer = CAGradientLayer()
@@ -284,9 +297,27 @@ extension customizationViewController: UICollectionViewDelegate, UICollectionVie
         
     }
     @IBAction func custComplete(sender: AnyObject) {
+        var CustomizationOfProductAfter:String = ""
+        
+        for index in 0...(self.ProductCustomization?.customizationDetails.CustomizationcategoryDetails.count)!-1
+        {
+            for insideIndex in 0...(self.ProductCustomization?.customizationDetails.CustomizationcategoryDetails[index].CategoryValue.count)!-1
+            {
+                arrayCustomizationSelected.append((self.ProductCustomization?.customizationDetails.CustomizationcategoryDetails[index].CategoryValue[insideIndex].customisationIsSelected)!)
+                if self.ProductCustomization?.customizationDetails.CustomizationcategoryDetails[index].CategoryValue[insideIndex].customisationIsSelected == true
+                {
+                    
+                    
+                    CustomizationOfProductAfter = CustomizationOfProductAfter + "_\((self.ProductCustomization?.customizationDetails.CustomizationcategoryDetails[index].CategoryValue[insideIndex].StoreAliasName)!)"
+                    
+                    
+                }
+            }
+        }
+
         let value = ProductCustomization!.SourceType
         var arrayOfMappedDictKey = value.characters.split{$0=="_"}.map(String.init)
-        let source = arrayOfMappedDictKey[1]
+        let source = fromSource
         
         if source == "Menu"
         {
@@ -296,6 +327,22 @@ extension customizationViewController: UICollectionViewDelegate, UICollectionVie
             ProductCustomization?.SourceType = "\(ProductCustomization!.SourceIndex)_Preference_Cust"
         }
         
+        if source == "Cart"
+        {
+            if !(self.CustomizationOfProductBefore == CustomizationOfProductAfter)
+            {
+                ProductCustomization?.SourceType = "\(ProductCustomization!.SourceIndex)_Cart_Cust_\(CustomizationOfProductAfter)"
+                self.appDelegate.mappedDictionary.removeValueForKey("\(productSourceTypeBefore)")
+                appDelegate.mappedDictionary["\(ProductCustomization?.SourceType)"] = ProductCustomization
+                
+            }
+
+
+        
+        }
+        else
+        {
+        
         for index in 0...(self.ProductCustomization?.customizationDetails.CustomizationcategoryDetails.count)!-1
         {
             for insideIndex in 0...(self.ProductCustomization?.customizationDetails.CustomizationcategoryDetails[index].CategoryValue.count)!-1
@@ -303,11 +350,19 @@ extension customizationViewController: UICollectionViewDelegate, UICollectionVie
                 arrayCustomizationSelected.append((self.ProductCustomization?.customizationDetails.CustomizationcategoryDetails[index].CategoryValue[insideIndex].customisationIsSelected)!)
                 if self.ProductCustomization?.customizationDetails.CustomizationcategoryDetails[index].CategoryValue[insideIndex].customisationIsSelected == true
                 {
-                    ProductCustomization?.SourceType = (ProductCustomization?.SourceType)! + "_\((self.ProductCustomization?.customizationDetails.CustomizationcategoryDetails[index].CategoryValue[insideIndex].StoreAliasName)!)"
-                    ProductCustomization?.isCustomized = true
-                    appDelegate.isMenuChanged = true
+                    if self.CustomizationOfProductBefore == CustomizationOfProductAfter
+                    {
+                      
+                        ProductCustomization?.SourceType = (ProductCustomization?.SourceType)! + "_\((self.ProductCustomization?.customizationDetails.CustomizationcategoryDetails[index].CategoryValue[insideIndex].StoreAliasName)!)"
+                        ProductCustomization?.isCustomized = true
+                        appDelegate.isMenuChanged = true
+                      
+                        
+                    }
                 }
             }
+        }
+        
         }
         
         
@@ -326,18 +381,65 @@ extension customizationViewController: UICollectionViewDelegate, UICollectionVie
         if source == "Menu"
         {
             self.appDelegate.menuJson.products[(ProductCustomization?.SourceIndex)!] = ProductCustomization!
+            
         }
         else if source == "Preference"{
             self.appDelegate.preferenceJson.products[(ProductCustomization?.SourceIndex)!] = ProductCustomization!
+            
         }
-        if !isComingFromPreference{
-            self.performSegueWithIdentifier("SegueCustomizationToOrderPlacement", sender: self)
+        else if source == "Cart"{
+            self.appDelegate.cartJson.products[(ProductCustomization?.SourceIndex)!] = ProductCustomization!
+            
         }
-        else{
+       
+        if isComingFromPreference{
             self.appDelegate.menuJson.products[(ProductCustomization?.SourceIndex)!].alreadyInPreference = true
             appDelegate.originalMenuJson.products[(ProductCustomization?.SourceIndex)!].alreadyInPreference = true
             self.appDelegate.preferenceJson.products.append(ProductCustomization!)
             performSegueWithIdentifier("segCustomizationToPreference", sender: self)
+        }
+        else
+        {
+            if source == "Cart"
+            {
+                if isCartCustomizationChanged
+                {
+                let alertController = UIAlertController(title: "Drive-Thru", message: "Customization is Changed!", preferredStyle: .Alert)
+                
+                // Create the actions
+                
+                let okAction = UIAlertAction(title: "OK", style: UIAlertActionStyle.Default)
+                    
+                    {
+                        
+                        UIAlertAction in
+                        self.performSegueWithIdentifier("SegueCustomizationToOrderPlacement", sender: self)
+                        
+                }
+                
+                
+                
+                // Add the actions
+                
+                alertController.addAction(okAction)
+                
+                // Present the controller
+                
+                self.presentViewController(alertController, animated: true, completion: nil)
+                }
+                else
+                {
+                   self.performSegueWithIdentifier("SegueCustomizationToOrderPlacement", sender: self)
+                }
+                
+            }
+            else
+            {
+             self.performSegueWithIdentifier("SegueCustomizationToOrderPlacement", sender: self)
+            }
+            
+            
+        
         }
     }
     
@@ -365,7 +467,7 @@ extension customizationViewController: UICollectionViewDelegate, UICollectionVie
         
         let value = ProductCustomization!.SourceType
         var arrayOfMappedDictKey = value.characters.split{$0=="_"}.map(String.init)
-        let source = arrayOfMappedDictKey[1]
+        let source = fromSource
         
         if source == "Menu"
         {
@@ -375,6 +477,10 @@ extension customizationViewController: UICollectionViewDelegate, UICollectionVie
         else if source == "Preference"
         {
             appDelegate.preferenceJson.products[(ProductCustomization?.SourceIndex)!] = ProductCustomization!
+        }
+        else if source == "Cart"
+        {
+            appDelegate.cartJson.products[(ProductCustomization?.SourceIndex)!] = ProductCustomization!
         }
         tableView.clearsContextBeforeDrawing = true
         // customCell.cv.clearsContextBeforeDrawing = true
@@ -395,7 +501,7 @@ extension customizationViewController: UICollectionViewDelegate, UICollectionVie
             let value = ProductCustomization!.SourceType
             var arrayOfMappedDictKey = value.characters.split{$0=="_"}.map(String.init)
             let sourceIndex = arrayOfMappedDictKey[0]
-            let source = arrayOfMappedDictKey[1]
+            let source = fromSource
             
             let destinationVC = segue.destinationViewController as! OrderPlacementViewController
             destinationVC.fromCustSourceType = (ProductCustomization?.SourceType)!
@@ -407,6 +513,13 @@ extension customizationViewController: UICollectionViewDelegate, UICollectionVie
             else if source == "Preference"
             {
                 destinationVC.setSourceType = ProductCustomization!.SourceType
+                appDelegate.isPreferenceChanged = true
+            }
+            else if source == "Cart"
+            {
+                destinationVC.fromCustSourceType = "\(ProductCustomization!.SourceIndex)_Cart"
+                
+                
             }
         }
         

@@ -20,195 +20,86 @@ import UIKit
 
 class OrderPlacementViewController: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource {
     
-    
-    
-    @IBOutlet weak var menuCV: UICollectionView!
-    
-    @IBOutlet weak var cartCV: UICollectionView!
-    
-    @IBOutlet weak var btnMenu: UIButton!
-    
-    @IBOutlet weak var lblTopBarMenu: UILabel!
-    
-    @IBOutlet weak var btnPlaceOrder: UIButton!
-    
-    @IBOutlet weak var lblTotalPriceCart: UILabel!
-    
-    
-    @IBOutlet var merchantImageView: UIImageView!
-    
-    
-    
-    
-    
     let defaults = NSUserDefaults.standardUserDefaults()
-    
     var appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
-    
     var setSourceType:String = "Menu"
-    
     var totalAmount:Double = 0.0
-    
     var imageCache:NSCache = NSCache()
-    
     var userMail: String = ""
-    
     var userPhone: String = ""
-    
     var customizationIndex:Int = Int()
-    
     var fromCustSourceType:String = ""
-    
     var segueCustomization:Bool = false
     var isOrderPlaced:Bool = false
+    var progressBar:UIProgressView = UIProgressView()
     
-    var passingTokenId:String = ""
-    
-    var passingOrderId:String = ""
-    
-    var indicator: UIActivityIndicatorView = UIActivityIndicatorView(activityIndicatorStyle: UIActivityIndicatorViewStyle.WhiteLarge)
-    
-    
-    
-    
-    
-    
+    @IBOutlet weak var menuCV: UICollectionView!
+    @IBOutlet weak var cartCV: UICollectionView!
+    @IBOutlet weak var btnMenu: UIButton!
+    @IBOutlet weak var lblTopBarMenu: UILabel!
+    @IBOutlet weak var btnPlaceOrder: UIButton!
+    @IBOutlet weak var lblTotalPriceCart: UILabel!
+    @IBOutlet var merchantImageView: UIImageView!
     
     override func viewDidLoad() {
-        
         super.viewDidLoad()
-        
-        
-        indicator.frame = CGRectMake(0.0, 0.0, 150.0, 150.0)
-        
         // Do any additional setup after loading the view.
+        progressBar.frame = CGRectMake(0.0, 0.0, 300.0, 300.0)
+        progressBar.transform = CGAffineTransformMakeScale(1.0, 3.0)
+        progressBar.trackTintColor = UIColor.lightGrayColor()
+        progressBar.progressTintColor = UIColor.darkGrayColor()
         btnPlaceOrder.layer.borderWidth = 1.0
-        
         btnPlaceOrder.layer.cornerRadius = 5.0
-        
         btnPlaceOrder.layer.borderColor = UIColor(red: 21/255, green: 126/255, blue: 251/255, alpha: 1.0).CGColor
         displayMerchantImage()
-        
-        
         if let mailid: String = defaults.objectForKey("userMailId") as? String
-            
         {
-            
             self.userMail = mailid
-            
         }
-        
         if let phnumber: String = defaults.objectForKey("userPhoneNumber") as? String
-            
         {
-            
             self.userPhone = phnumber
-            
         }
-        
         if appDelegate.preferenceJson.products.isEmpty
-            
         {
-            
             setSourceType = "Menu"
-            
         }
-            
         else
-            
         {
-            
             setSourceType = "Preference"
-            
         }
-        
-        
-        
-        
-        
         if setSourceType == "Menu"
-            
         {
-            
             btnMenu.setImage(UIImage(named:"Hearts-100.png"), forState: .Normal)
-            
         }
-            
         else  if setSourceType == "Preference"
-            
         {
-            
             btnMenu.setImage(UIImage(named:"menu100_grey.png"), forState: .Normal)
-            
         }
-        
-        
         menuCV.delegate = self
-        
         menuCV.dataSource = self
-        
         cartCV.delegate = self
-        
         cartCV.dataSource = self
-        
-        
-        
-        
-        
-        // dispatch_once(appDelegate.token) { () -> Void in
-        
-        //
-        
-        //     //   self.getMerchantMenuitems()
-        
-        //    }
-        
-        if appDelegate.isPreferenceChanged
-            
-        {
-            
-          //  DataManager.setPreference()
-            
-        }
-        
         if (segueCustomization)
-            
         {
-            
             ShowItemFromCust()
-            
         }
-        
+        else
+        {
+            if appDelegate.isPreferenceChanged
+            {
+                DataManager.setPreference()
+            }
+        }
     }
     
-    
-    
+
     override func didReceiveMemoryWarning() {
-        
         super.didReceiveMemoryWarning()
-        
         // Dispose of any resources that can be recreated.
-        
     }
     
-    
-    
-    
-    
-    
-    
-    override func viewWillDisappear(animated: Bool) {
-        
-        print("success")
-        
-        
-        
-        
-        
-    }
-    
-    
-    
+    //Function to Display merchant image
     func displayMerchantImage()
     {
         let imageName = self.appDelegate.MerchantImageUrlString
@@ -219,398 +110,180 @@ class OrderPlacementViewController: UIViewController, UICollectionViewDelegate, 
             if error == nil {
                 // Convert the downloaded data in to a UIImage object
                 let image = UIImage(data: data!)
-                // Store the image in to our cache
-                // Update the cell
                 dispatch_async(dispatch_get_main_queue(), {
-                    // if let cellToUpdate = menuCV.cellForRowAtIndexPath(indexPath) as? menuCollectionViewCell {
-                    // cellToUpdate.imageView?.image = image
                     self.merchantImageView.image = image
-                    
-                    // }
                 })
-                
             }
             else {
                 print("Error: \(error!.localizedDescription)")
             }
         })
-        
-        
     }
+    //End- Function to Display merchant image
     
-    
-    
-    
+    //Function that executes when it comes from Customization ViewController to set Customization for respective product
     func ShowItemFromCust()
-        
     {
-        
-        
-        
         let value = self.fromCustSourceType
-        
         var arrayOfMappedDictKey = value.characters.split{$0=="_"}.map(String.init)
-        
         let indexPathRow = Int(arrayOfMappedDictKey[0])
-        
         let sourceType = arrayOfMappedDictKey[1]
-        
         if sourceType == "Menu"
-            
         {
-            
             setSourceType = "Menu"
-            
             self.menuCV.reloadData()
-            
             self.menuCV.layoutIfNeeded()
-            
             btnMenu.setImage(UIImage(named:"Hearts-100.png"), forState: .Normal)
-            
-            
-            
             self.menuCV.scrollToItemAtIndexPath(NSIndexPath(forItem: indexPathRow! , inSection: 0), atScrollPosition: UICollectionViewScrollPosition.CenteredHorizontally, animated: true)
-            
         }
-            
         else if sourceType == "Preference"
-            
         {
-            
             setSourceType = "Preference"
-            
             btnMenu.setImage(UIImage(named:"menu100_grey.png"), forState: .Normal)
-            
             self.menuCV.reloadData()
-            
+            self.menuCV.layoutIfNeeded()
             self.menuCV.scrollToItemAtIndexPath(NSIndexPath(forItem: indexPathRow! , inSection: 0), atScrollPosition: UICollectionViewScrollPosition.CenteredHorizontally, animated: true)
-            
         }
-        
-        
-        
-    }
-    
-    
-    
-    
-    
-    func getMerchantMenuitems()
-        
-    {
-        
-        DataManager.getDataFromRestfullWithSuccess("http://sqweezy.com/DriveThru/get_menu.php?merchant_id=1") { (data) -> Void in
-            
-            var json: [String: AnyObject]!
-            
-            
-            
-            //   DataManager.getTopAppsDataFromFileWithSuccess { (data) -> Void in
-            
-            //       var json: [String: AnyObject]!
-            
-            
-            
-            
-            
-            // 1
-            
-            do {
-                
-                json = try NSJSONSerialization.JSONObjectWithData(data, options: NSJSONReadingOptions()) as? [String: AnyObject]
-                
-            } catch {
-                
-                print(error)
-                
-            }
-            
-            
-            
-            // 2
-            
-            if let menu = Menu(json: json)
-                
+        else if sourceType == "Cart"
+        {
+            setSourceType = "Cart"
+            if appDelegate.PreviousSourceType == "Menu"
             {
-                
-                self.appDelegate.menuJson = menu
-                
-                for index in 0...self.appDelegate.menuJson.products.count-1
-                    
-                {
-                    
-                    self.appDelegate.menuJson.products[index].SourceType = "\(index)_Menu"
-                    
-                }
-                
-                self.appDelegate.originalMenuJson = self.appDelegate.menuJson
-                
-                dispatch_async(dispatch_get_main_queue(), {
-                    
-                    self.menuCV.reloadData()
-                    
-                })
-                
+            btnMenu.setImage(UIImage(named:"menu100_grey.png"), forState: .Normal)
             }
-                
-            else {
-                
-                print("Error initializing object")
-                
-                return
-                
+            else  if appDelegate.PreviousSourceType == "Preference"
+            {
+                btnMenu.setImage(UIImage(named:"Hearts-100.png"), forState: .Normal)
             }
-            
+            self.menuCV.reloadData()
+            self.menuCV.layoutIfNeeded()
+            self.menuCV.scrollToItemAtIndexPath(NSIndexPath(forItem: indexPathRow! , inSection: 0), atScrollPosition: UICollectionViewScrollPosition.CenteredHorizontally, animated: true)
         }
-        
     }
-    
-    
-    
-    
+    //Function that executes when it comes from Customization ViewController to set Customization for respective product
     
     func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        
         var noOfItems = 0
-        
         if collectionView == menuCV
-            
         {
-            
             if setSourceType == "Menu"
-                
             {
-                
                 noOfItems = appDelegate.menuJson.products.count
-                
             }
-                
-                
-                
             else if setSourceType == "Preference"
-                
             {
-                
                 noOfItems = appDelegate.preferenceJson.products.count
-                
             }
-            
-            
-            
+            else if setSourceType == "Cart"
+            {
+                noOfItems = appDelegate.cartJson.products.count
+            }
         }
-            
         else if collectionView == cartCV
-            
         {
-            
             noOfItems = appDelegate.cartJson.products.count
-            
         }
-        
         return noOfItems
-        
     }
-    
-    
-    
     
     
     func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
-        
         if collectionView == cartCV
-            
         {
-            
-            let selctedCartValue = appDelegate.cartJson.products[indexPath.row]
-            
-            let value = selctedCartValue.SourceType
-            
-            var arrayOfMappedDictKey = value.characters.split{$0=="_"}.map(String.init)
-            
-            let indexPathRow = Int(arrayOfMappedDictKey[0])
-            
-            let sourceType = arrayOfMappedDictKey[1]
-            
-            if sourceType == "Menu"
-                
+            let cell = collectionView.cellForItemAtIndexPath(indexPath)
+            if !(setSourceType == "Cart")
             {
-                
-                setSourceType = "Menu"
-                
-                appDelegate.menuJson.products[indexPathRow!] = appDelegate.cartJson.products[indexPath.row]
-                
-                btnMenu.setImage(UIImage(named:"Hearts-100.png"), forState: .Normal)
-                
-                self.menuCV.reloadData()
-                
-                self.menuCV.scrollToItemAtIndexPath(NSIndexPath(forItem: indexPathRow! , inSection: 0), atScrollPosition: UICollectionViewScrollPosition.CenteredHorizontally, animated: true)
-                
-                if(appDelegate.cartJson.products[indexPath.row].isCustomized == true)
-                    
-                {
-                    
-                    appDelegate.isMenuChanged = true
-                    
-                }
-                
-                
-                
-                
-                
+            let currentIndexpath = self.menuCV.indexPathsForVisibleItems()
+            appDelegate.PreviousSourceItemIndex = currentIndexpath[0].row
+            appDelegate.PreviousSourceType = setSourceType
+            if setSourceType == "Preference"
+            {
+             btnMenu.setImage(UIImage(named:"Hearts-100.png"), forState: .Normal)
             }
-                
-            else if sourceType == "Preference"
-                
+            else if setSourceType == "Menu"
             {
-                
-                setSourceType = "Preference"
-                
-                appDelegate.preferenceJson.products[indexPathRow!] = appDelegate.cartJson.products[indexPath.row]
-                
                 btnMenu.setImage(UIImage(named:"menu100_grey.png"), forState: .Normal)
-                
-                self.menuCV.reloadData()
-                
-                self.menuCV.scrollToItemAtIndexPath(NSIndexPath(forItem: indexPathRow! , inSection: 0), atScrollPosition: UICollectionViewScrollPosition.CenteredHorizontally, animated: true)
-                
             }
+                self.menuCV.reloadData()
+
+            }
+            UIView.animateWithDuration(0.3, animations: { () -> Void in
+                
+                
+                cell!.transform = CGAffineTransformMakeScale(1.3,1.3)
+                cell!.layer.shadowColor = UIColor.blackColor().CGColor
+                cell!.layer.shadowOffset = CGSizeMake(5, 5)
+                cell!.layer.shadowRadius = 5
+                cell!.layer.shadowOpacity = 1.0
+                cell!.layer.masksToBounds = false
+                
+            })
+            let indexPathRow = indexPath.row
             
+            setSourceType = "Cart"
+            self.menuCV.scrollToItemAtIndexPath(NSIndexPath(forItem: indexPathRow , inSection: 0), atScrollPosition: UICollectionViewScrollPosition.CenteredHorizontally, animated: true)
+  
         }
-        
+    }
+    
+    func collectionView(collectionView: UICollectionView, didDeselectItemAtIndexPath indexPath: NSIndexPath)
+    {
+        if collectionView == cartCV
+        {
+            let cell = collectionView.cellForItemAtIndexPath(indexPath)
+             UIView.animateWithDuration(0.3, animations: { () -> Void in
+            cell!.transform = CGAffineTransformMakeScale(1,1)
+                cell!.layer.shadowOpacity = 0.0
+
+                })
+        }
     }
     
     
-    
-    
-    
     func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
-        
         var cell = UICollectionViewCell()
-        
-        //let bounds = UIScreen.mainScreen().bounds
-        
-        
-        
         if collectionView == menuCV
-            
         {
-            
             if setSourceType == "Menu"
-                
             {
-                
                 cell = collectionView.dequeueReusableCellWithReuseIdentifier("menuCell",forIndexPath: indexPath) as UICollectionViewCell
-                
-                
-                
                 let imageName = appDelegate.menuJson.products[indexPath.row].productImage
-                
                 let productName = appDelegate.menuJson.products[indexPath.row].productName
-                
                 var productPrice: Double = 0
-                
-                
-                
-                
-                
                 productPrice = appDelegate.menuJson.products[indexPath.row].productPrice
-                
-                
-                
-                
-                
                 let addToCartSelector = Selector("AddItemToCart:")
-                
                 let DownSwipe = UISwipeGestureRecognizer(target: self, action: addToCartSelector)
-                
                 DownSwipe.direction = .Down
-                
                 cell.addGestureRecognizer(DownSwipe)
-                
-                
-                
-                let removeFromCartSelector = Selector("RemoveItemFromCart:")
-                
-                let UpSwipe = UISwipeGestureRecognizer(target: self, action: removeFromCartSelector)
-                
-                UpSwipe.direction = .Up
-                
-                cell.addGestureRecognizer(UpSwipe)
-                
                 lblTopBarMenu.text = "Menu"
-                
-                
-                
-                
-                
                 if let menuCell = cell as? menuCollectionViewCell {
-                    
-                    //menuCell.itemsimageview.frame.size.width = cell.frame.size.width
-                    
                     menuCell.btnAddToPreference.hidden = false
-                    
-                    
-                    
                     if appDelegate.menuJson.products[indexPath.row].CustomizationAvailable == true
-                        
                     {
-                        
-                        
-                        
                         if appDelegate.menuJson.products[indexPath.row].isCustomized == true
-                            
                         {
-                            
                             menuCell.btnCustomization.setImage(UIImage(named: "Customize_Selected.png") ,forState: .Normal)
-                            
                         }
-                            
                         else
-                            
                         {
-                            
                             menuCell.btnCustomization.setImage(UIImage(named: "Customize_UnSelected.png") ,forState: .Normal)
-                            
                         }
-                        
                         menuCell.btnCustomization.userInteractionEnabled = true
-                        
                     }
-                        
                     else
-                        
                     {
-                        
                         menuCell.btnCustomization.setImage(UIImage(named: "NoCustomizationAvailable.png") ,forState: .Normal)
-                        
                         menuCell.btnCustomization.userInteractionEnabled = false
-                        
-                        
-                        
                     }
-                    
                     if (appDelegate.menuJson.products[indexPath.row].alreadyInPreference == false)
-                        
                     {
-                        
                         menuCell.btnAddToPreference.setImage(UIImage(named: "UnselectedPreference.png"), forState: .Normal)
-                        
                     }
-                        
                     else if(appDelegate.menuJson.products[indexPath.row].alreadyInPreference == true)
-                        
                     {
-                        
                         menuCell.btnAddToPreference.setImage(UIImage(named: "SelectedPreference.png"), forState: .Normal)
-                        
-                        
-                        
                     }
-                    
                     let url = NSURL(string: imageName)
-                    
-                    
-                    
                     //                    if let img:UIImage = imageCache.objectForKey(url!) as? UIImage {
                     //
                     //                        // cell.imageView?.image = img as UIImage
@@ -622,577 +295,322 @@ class OrderPlacementViewController: UIViewController, UICollectionViewDelegate, 
                     //                    }
                     //
                     //                    else {
-                    
                     // The image isn't cached, download the img data
-                    
                     // We should perform this in a background thread
-                    
                     let request: NSURLRequest = NSURLRequest(URL: url!)
-                    
                     let mainQueue = NSOperationQueue.mainQueue()
-                    
                     NSURLConnection.sendAsynchronousRequest(request, queue: mainQueue, completionHandler: { (response, data, error) -> Void in
-                        
                         if error == nil {
-                            
                             // Convert the downloaded data in to a UIImage object
-                            
                             let image = UIImage(data: data!)
-                            
                             // Store the image in to our cache
-                            
                             self.imageCache.setObject(image!, forKey: url!)
-                            
                             // Update the cell
-                            
                             dispatch_async(dispatch_get_main_queue(), {
-                                
-                                // if let cellToUpdate = menuCV.cellForRowAtIndexPath(indexPath) as? menuCollectionViewCell {
-                                
-                                // cellToUpdate.imageView?.image = image
-                                
                                 menuCell.productImageView.image = image
-                                
-                                
-                                
-                                // }
-                                
                             })
-                            
-                            
-                            
                         }
-                            
                         else {
-                            
                             print("Error: \(error!.localizedDescription)")
-                            
                         }
-                        
                     })
-                    
-                    //        }
-                    
-                    
-                    
                     menuCell.productName.text  = productName
-                    
                     if appDelegate.menuJson.products[indexPath.row].isCustomized == true
-                        
                     {
-                        
                         for indexCatDetails in 0...appDelegate.menuJson.products[indexPath.row].customizationDetails.CustomizationcategoryDetails.count-1
-                            
                         {
-                            
                             for index in 0...appDelegate.menuJson.products[indexPath.row].customizationDetails.CustomizationcategoryDetails[indexCatDetails].CategoryValue.count-1                       {
-                                
                                 if (appDelegate.menuJson.products[indexPath.row].customizationDetails.CustomizationcategoryDetails[indexCatDetails].CategoryValue[index].customisationIsSelected)
-                                    
                                 {
-                                    
                                     productPrice = productPrice + appDelegate.menuJson.products[indexPath.row].customizationDetails.CustomizationcategoryDetails[indexCatDetails].CategoryValue[index].CustomizationPrice
-                                    
                                 }
-                                
-                                
-                                
                             }
-                            
                         }
-                        
                     }
-                    
                     menuCell.productPrice.text = "₹ \(productPrice)"
-                    
                     menuCell.btnAddToPreference.tag = indexPath.row
-                    
                     menuCell.btnAddToPreference.addTarget(self, action: "AddOrRemovePreference:", forControlEvents: UIControlEvents.TouchUpInside)
-                    
-                    menuCell.btnCustomization.addTarget(self, action: "Customize:", forControlEvents: UIControlEvents.TouchUpInside)
-                    
                     menuCell.btnCustomization.tag = indexPath.row
-                    
-                    
-                    
+                    menuCell.btnCustomization.addTarget(self, action: "Customize:", forControlEvents: UIControlEvents.TouchUpInside)
                     menuCell.btnLeftMenuCell.addTarget(self, action: "ClickLeftArrowScrollButton:", forControlEvents: UIControlEvents.TouchUpInside)
-                    
                     menuCell.btnLeftMenuCell.tag = indexPath.row
-                    
                     menuCell.btnRightMenuCell.addTarget(self, action: "ClickRightArrowScrollButton:", forControlEvents: UIControlEvents.TouchUpInside)
-                    
                     menuCell.btnRightMenuCell.tag = indexPath.row
-                    
                     if indexPath.row == 0
-                        
                     {
-                        
                         menuCell.btnLeftMenuCell.hidden = true
-                        
                         menuCell.btnRightMenuCell.hidden = false
-                        
                     }
-                        
                     else if indexPath.row == (appDelegate.menuJson.products.count)-1
-                        
                     {
-                        
                         menuCell.btnLeftMenuCell.hidden = false
-                        
                         menuCell.btnRightMenuCell.hidden = true
-                        
-                        
-                        
                     }
-                        
                     else
-                        
                     {
-                        
                         menuCell.btnRightMenuCell.hidden = false
-                        
                         menuCell.btnLeftMenuCell.hidden = false
-                        
-                        
-                        
                     }
-                    
                     if appDelegate.menuJson.products.count == 1
-                        
                     {
-                        
                         menuCell.btnRightMenuCell.hidden = true
-                        
                         menuCell.btnLeftMenuCell.hidden = true
-                        
                     }
-                    
-                    
-                    
-                    // gridCell.itemsimageview.addGestureRecognizer(DownSwipe)
-                    
                 }
-                
-                
-                
             }
-                
-            else if setSourceType == "Preference"
-                
+            else if setSourceType == "Cart"
             {
-                
                 cell = collectionView.dequeueReusableCellWithReuseIdentifier("menuCell",forIndexPath: indexPath) as UICollectionViewCell
-                
-                
-                
-                let imageName = appDelegate.preferenceJson.products[indexPath.row].productImage
-                
-                let productName = appDelegate.preferenceJson.products[indexPath.row].productName
-                
-                var productPrice = appDelegate.preferenceJson.products[indexPath.row].productPrice
-                
+                cell.transform = CGAffineTransformMakeScale(1,1)
+                let imageName = appDelegate.cartJson.products[indexPath.row].productImage
+                let productName = appDelegate.cartJson.products[indexPath.row].productName
+                var productPrice: Double = 0
+                productPrice = appDelegate.cartJson.products[indexPath.row].productPrice
                 let addToCartSelector = Selector("AddItemToCart:")
-                
                 let DownSwipe = UISwipeGestureRecognizer(target: self, action: addToCartSelector)
-                
                 DownSwipe.direction = .Down
-                
                 cell.addGestureRecognizer(DownSwipe)
-                
-                
-                
                 let removeFromCartSelector = Selector("RemoveItemFromCart:")
-                
                 let UpSwipe = UISwipeGestureRecognizer(target: self, action: removeFromCartSelector)
-                
                 UpSwipe.direction = .Up
-                
                 cell.addGestureRecognizer(UpSwipe)
-                
-                lblTopBarMenu.text = "Preference"
-                
-                
-                
-                
-                
+                lblTopBarMenu.text = "Cart"
                 if let menuCell = cell as? menuCollectionViewCell {
-                    
-                    //menuCell.itemsimageview.frame.size.width = cell.frame.size.width
-                    
-                    
-                    
-                    
-                    
-                    if appDelegate.preferenceJson.products[indexPath.row].CustomizationAvailable == true
-                        
+                    menuCell.btnAddToPreference.hidden = false
+                    if appDelegate.cartJson.products[indexPath.row].CustomizationAvailable == true
                     {
-                        
-                        
-                        
-                        if appDelegate.preferenceJson.products[indexPath.row].isCustomized == true
-                            
+                        if appDelegate.cartJson.products[indexPath.row].isCustomized == true
                         {
-                            
                             menuCell.btnCustomization.setImage(UIImage(named: "Customize_Selected.png") ,forState: .Normal)
-                            
                         }
-                            
                         else
-                            
                         {
-                            
                             menuCell.btnCustomization.setImage(UIImage(named: "Customize_UnSelected.png") ,forState: .Normal)
-                            
                         }
-                        
                         menuCell.btnCustomization.userInteractionEnabled = true
-                        
                     }
-                        
                     else
-                        
                     {
-                        
                         menuCell.btnCustomization.setImage(UIImage(named: "NoCustomizationAvailable.png") ,forState: .Normal)
-                        
                         menuCell.btnCustomization.userInteractionEnabled = false
-                        
-                        
-                        
                     }
-                    
-                    
-                    
-                    
-                    
-                    menuCell.btnAddToPreference.setImage(UIImage(named: "SelectedPreference.png"), forState: .Normal)
-                    
-                    
-                    
+                        menuCell.btnAddToPreference.setImage(UIImage(named: "UnselectedPreference.png"), forState: .Normal)
+                        menuCell.btnAddToPreference.userInteractionEnabled = false
                     let url = NSURL(string: imageName)
-                    
-                    //                    if let img:UIImage = imageCache.objectForKey(url!) as? UIImage {
-                    //
-                    //                        // cell.imageView?.image = img as UIImage
-                    //
-                    //                        menuCell.productImageView.image = img as UIImage
-                    //
-                    //
-                    //
-                    //                    }
-                    //
-                    //                    else {
-                    
-                    // The image isn't cached, download the img data
-                    
                     // We should perform this in a background thread
-                    
                     let request: NSURLRequest = NSURLRequest(URL: url!)
-                    
                     let mainQueue = NSOperationQueue.mainQueue()
-                    
                     NSURLConnection.sendAsynchronousRequest(request, queue: mainQueue, completionHandler: { (response, data, error) -> Void in
-                        
                         if error == nil {
-                            
                             // Convert the downloaded data in to a UIImage object
-                            
                             let image = UIImage(data: data!)
-                            
                             // Store the image in to our cache
-                            
                             self.imageCache.setObject(image!, forKey: url!)
-                            
                             // Update the cell
-                            
                             dispatch_async(dispatch_get_main_queue(), {
-                                
-                                // if let cellToUpdate = menuCV.cellForRowAtIndexPath(indexPath) as? menuCollectionViewCell {
-                                
-                                // cellToUpdate.imageView?.image = image
-                                
                                 menuCell.productImageView.image = image
-                                
-                                
-                                
-                                // }
-                                
                             })
-                            
-                            
-                            
                         }
-                            
                         else {
-                            
                             print("Error: \(error!.localizedDescription)")
-                            
                         }
-                        
                     })
-                    
-                    //                }
-                    
-                    
-                    
                     menuCell.productName.text  = productName
-                    
-                    if appDelegate.preferenceJson.products[indexPath.row].isCustomized == true
-                        
+                    if appDelegate.cartJson.products[indexPath.row].isCustomized == true
                     {
-                        
-                        for indexCatDetails in 0...appDelegate.preferenceJson.products[indexPath.row].customizationDetails.CustomizationcategoryDetails.count-1
-                            
+                        for indexCatDetails in 0...appDelegate.cartJson.products[indexPath.row].customizationDetails.CustomizationcategoryDetails.count-1
                         {
-                            
-                            for index in 0...appDelegate.preferenceJson.products[indexPath.row].customizationDetails.CustomizationcategoryDetails[indexCatDetails].CategoryValue.count-1                       {
-                                
-                                if (appDelegate.preferenceJson.products[indexPath.row].customizationDetails.CustomizationcategoryDetails[indexCatDetails].CategoryValue[index].customisationIsSelected)
-                                    
+                            for index in 0...appDelegate.cartJson.products[indexPath.row].customizationDetails.CustomizationcategoryDetails[indexCatDetails].CategoryValue.count-1                       {
+                                if (appDelegate.cartJson.products[indexPath.row].customizationDetails.CustomizationcategoryDetails[indexCatDetails].CategoryValue[index].customisationIsSelected)
                                 {
-                                    
-                                    productPrice = productPrice + appDelegate.preferenceJson.products[indexPath.row].customizationDetails.CustomizationcategoryDetails[indexCatDetails].CategoryValue[index].CustomizationPrice
-                                    
+                                    productPrice = productPrice + appDelegate.cartJson.products[indexPath.row].customizationDetails.CustomizationcategoryDetails[indexCatDetails].CategoryValue[index].CustomizationPrice
                                 }
-                                
-                                
-                                
                             }
-                            
                         }
-                        
                     }
-                    
                     menuCell.productPrice.text = "₹ \(productPrice)"
-                    
-                    menuCell.btnAddToPreference.tag = indexPath.row
-                    
-                    menuCell.btnAddToPreference.addTarget(self, action: "AddOrRemovePreference:", forControlEvents: UIControlEvents.TouchUpInside)
-                    
+                    menuCell.btnCustomization.tag = indexPath.row
+                    menuCell.btnCustomization.addTarget(self, action: "Customize:", forControlEvents: UIControlEvents.TouchUpInside)
                     menuCell.btnLeftMenuCell.addTarget(self, action: "ClickLeftArrowScrollButton:", forControlEvents: UIControlEvents.TouchUpInside)
-                    
                     menuCell.btnLeftMenuCell.tag = indexPath.row
-                    
                     menuCell.btnRightMenuCell.addTarget(self, action: "ClickRightArrowScrollButton:", forControlEvents: UIControlEvents.TouchUpInside)
-                    
                     menuCell.btnRightMenuCell.tag = indexPath.row
-                    
                     if indexPath.row == 0
-                        
                     {
-                        
                         menuCell.btnLeftMenuCell.hidden = true
-                        
                         menuCell.btnRightMenuCell.hidden = false
-                        
                     }
-                        
-                    else if indexPath.row == (appDelegate.preferenceJson.products.count)-1
-                        
+                    else if indexPath.row == (appDelegate.cartJson.products.count)-1
                     {
-                        
                         menuCell.btnLeftMenuCell.hidden = false
-                        
                         menuCell.btnRightMenuCell.hidden = true
-                        
-                        
-                        
                     }
-                        
                     else
-                        
                     {
-                        
                         menuCell.btnRightMenuCell.hidden = false
-                        
                         menuCell.btnLeftMenuCell.hidden = false
-                        
-                        
-                        
                     }
-                    
-                    if appDelegate.preferenceJson.products.count == 1
-                        
+                    if appDelegate.cartJson.products.count == 1
                     {
-                        
                         menuCell.btnRightMenuCell.hidden = true
-                        
                         menuCell.btnLeftMenuCell.hidden = true
-                        
                     }
-                    
-                    
-                    
-                    // gridCell.itemsimageview.addGestureRecognizer(DownSwipe)
-                    
                 }
-                
-                
-                
             }
-            
-            
-            
-        }
-            
-        else if collectionView == cartCV
-            
-        {
-            
-            
-            
-            cell = collectionView.dequeueReusableCellWithReuseIdentifier("cartCell",forIndexPath: indexPath) as UICollectionViewCell
-            
-            let imageName = appDelegate.cartJson.products[indexPath.row].productImage
-            
-            if let cartCell = cell as? cartCollectionViewCell {
-                
-                let url = NSURL(string: imageName)
-                
-                if let img:UIImage = imageCache.objectForKey(url!) as? UIImage {
-                    
-                    // cell.imageView?.image = img as UIImage
-                    
-                    cartCell.productImageView.image = img
-                    
-                    
-                    
-                }
-                    
-                else {
-                    
-                    // The image isn't cached, download the img data
-                    
-                    // We should perform this in a background thread
-                    
-                    let request: NSURLRequest = NSURLRequest(URL: url!)
-                    
-                    let mainQueue = NSOperationQueue.mainQueue()
-                    
-                    NSURLConnection.sendAsynchronousRequest(request, queue: mainQueue, completionHandler: { (response, data, error) -> Void in
-                        
-                        if error == nil {
-                            
-                            // Convert the downloaded data in to a UIImage object
-                            
-                            let image = UIImage(data: data!)
-                            
-                            // Store the image in to our cache
-                            
-                            // self.imageCache.setObject(image!, forKey: url!)
-                            
-                            // Update the cell
-                            
-                            dispatch_async(dispatch_get_main_queue(), {
-                                
-                                // if let cellToUpdate = menuCV.cellForRowAtIndexPath(indexPath) as? menuCollectionViewCell {
-                                
-                                // cellToUpdate.imageView?.image = image
-                                
-                                cartCell.productImageView.image = image
-                                
-                                
-                                
-                                // }
-                                
-                            })
-                            
-                            
-                            
-                        }
-                            
-                        else {
-                            
-                            print("Error: \(error!.localizedDescription)")
-                            
-                        }
-                        
-                    })
-                    
-                }
-                
-                cartCell.noOfProducts.layer.cornerRadius = 14.0
-                
-                
-                
-                cartCell.noOfProducts.clipsToBounds = true
-                
-                cartCell.noOfProducts.text = "\(appDelegate.cartJson.products[indexPath.row].numberOfProduct)"
-                
-                totalAmount = 0.0
-                
-                for indexOut in 0...(appDelegate.cartJson.products.count)-1
-                    
-                {
-                    
-                    if appDelegate.cartJson.products[indexOut].isCustomized == false
-                        
+            else if setSourceType == "Preference"
+            {
+                cell = collectionView.dequeueReusableCellWithReuseIdentifier("menuCell",forIndexPath: indexPath) as UICollectionViewCell
+                let imageName = appDelegate.preferenceJson.products[indexPath.row].productImage
+                let productName = appDelegate.preferenceJson.products[indexPath.row].productName
+                var productPrice = appDelegate.preferenceJson.products[indexPath.row].productPrice
+                let addToCartSelector = Selector("AddItemToCart:")
+                let DownSwipe = UISwipeGestureRecognizer(target: self, action: addToCartSelector)
+                DownSwipe.direction = .Down
+                cell.addGestureRecognizer(DownSwipe)
+                lblTopBarMenu.text = "Preference"
+                if let menuCell = cell as? menuCollectionViewCell {
+                    if appDelegate.preferenceJson.products[indexPath.row].CustomizationAvailable == true
                     {
-                        
-                        totalAmount = totalAmount+((appDelegate.cartJson.products[indexOut].productPrice) * Double((appDelegate.cartJson.products[indexOut].numberOfProduct)))
-                        
-                    }
-                        
-                    else if appDelegate.cartJson.products[indexOut].isCustomized == true
-                        
-                    {
-                        
-                        var custPrice:Double = 0.0
-                        
-                        for indexCatDetails in 0...appDelegate.cartJson.products[indexOut].customizationDetails.CustomizationcategoryDetails.count-1
-                            
+                        if appDelegate.preferenceJson.products[indexPath.row].isCustomized == true
                         {
-                            
-                            
-                            
-                            for index in 0...appDelegate.cartJson.products[indexOut].customizationDetails.CustomizationcategoryDetails[indexCatDetails].CategoryValue.count-1                       {
-                                
-                                if (appDelegate.cartJson.products[indexOut].customizationDetails.CustomizationcategoryDetails[indexCatDetails].CategoryValue[index].customisationIsSelected)
-                                    
-                                {
-                                    
-                                    custPrice = custPrice +  appDelegate.cartJson.products[indexOut].customizationDetails.CustomizationcategoryDetails[indexCatDetails].CategoryValue[index].CustomizationPrice
-                                    
-                                }
-                                
-                                
-                                
-                            }
-                            
-                            
-                            
+                            menuCell.btnCustomization.setImage(UIImage(named: "Customize_Selected.png") ,forState: .Normal)
                         }
-                        
-                        totalAmount = totalAmount + ((appDelegate.cartJson.products[indexOut].productPrice + custPrice) * Double(appDelegate.cartJson.products[indexOut].numberOfProduct))
-                        
+                        else
+                        {
+                            menuCell.btnCustomization.setImage(UIImage(named: "Customize_UnSelected.png") ,forState: .Normal)
+                        }
+                        menuCell.btnCustomization.userInteractionEnabled = true
                     }
-                    
-                    
-                    
+                    else
+                    {
+                        menuCell.btnCustomization.setImage(UIImage(named: "NoCustomizationAvailable.png") ,forState: .Normal)
+                        menuCell.btnCustomization.userInteractionEnabled = false
+                    }
+                    menuCell.btnAddToPreference.setImage(UIImage(named: "SelectedPreference.png"), forState: .Normal)
+                    let url = NSURL(string: imageName)
+                    // We should perform this in a background thread
+                    let request: NSURLRequest = NSURLRequest(URL: url!)
+                    let mainQueue = NSOperationQueue.mainQueue()
+                    NSURLConnection.sendAsynchronousRequest(request, queue: mainQueue, completionHandler: { (response, data, error) -> Void in
+                        if error == nil {
+                            // Convert the downloaded data in to a UIImage object
+                            let image = UIImage(data: data!)
+                            // Store the image in to our cache
+                            self.imageCache.setObject(image!, forKey: url!)
+                            // Update the cell
+                            dispatch_async(dispatch_get_main_queue(), {
+                                menuCell.productImageView.image = image
+                            })
+                        }
+                        else {
+                            print("Error: \(error!.localizedDescription)")
+                        }
+                    })
+                    menuCell.productName.text  = productName
+                    if appDelegate.preferenceJson.products[indexPath.row].isCustomized == true
+                    {
+                        for indexCatDetails in 0...appDelegate.preferenceJson.products[indexPath.row].customizationDetails.CustomizationcategoryDetails.count-1
+                        {
+                            for index in 0...appDelegate.preferenceJson.products[indexPath.row].customizationDetails.CustomizationcategoryDetails[indexCatDetails].CategoryValue.count-1                       {
+                                if (appDelegate.preferenceJson.products[indexPath.row].customizationDetails.CustomizationcategoryDetails[indexCatDetails].CategoryValue[index].customisationIsSelected)
+                                {
+                                    productPrice = productPrice + appDelegate.preferenceJson.products[indexPath.row].customizationDetails.CustomizationcategoryDetails[indexCatDetails].CategoryValue[index].CustomizationPrice
+                                }
+                            }
+                        }
+                    }
+                    menuCell.productPrice.text = "₹ \(productPrice)"
+                    menuCell.btnAddToPreference.tag = indexPath.row
+                    menuCell.btnAddToPreference.addTarget(self, action: "AddOrRemovePreference:", forControlEvents: UIControlEvents.TouchUpInside)
+                    menuCell.btnCustomization.tag = indexPath.row
+                    menuCell.btnCustomization.addTarget(self, action: "Customize:", forControlEvents: UIControlEvents.TouchUpInside)
+                    menuCell.btnLeftMenuCell.addTarget(self, action: "ClickLeftArrowScrollButton:", forControlEvents: UIControlEvents.TouchUpInside)
+                    menuCell.btnLeftMenuCell.tag = indexPath.row
+                    menuCell.btnRightMenuCell.addTarget(self, action: "ClickRightArrowScrollButton:", forControlEvents: UIControlEvents.TouchUpInside)
+                    menuCell.btnRightMenuCell.tag = indexPath.row
+                    if indexPath.row == 0
+                    {
+                        menuCell.btnLeftMenuCell.hidden = true
+                        menuCell.btnRightMenuCell.hidden = false
+                    }
+                    else if indexPath.row == (appDelegate.preferenceJson.products.count)-1
+                    {
+                        menuCell.btnLeftMenuCell.hidden = false
+                        menuCell.btnRightMenuCell.hidden = true
+                    }
+                    else
+                    {
+                        menuCell.btnRightMenuCell.hidden = false
+                        menuCell.btnLeftMenuCell.hidden = false
+                    }
+                    if appDelegate.preferenceJson.products.count == 1
+                    {
+                        menuCell.btnRightMenuCell.hidden = true
+                        menuCell.btnLeftMenuCell.hidden = true
+                    }
                 }
-                
-                
-                
-                
-                
-                
-                
-                lblTotalPriceCart.text = "Total ₹\(totalAmount)"
-                
             }
-            
-            
-            
-            
-            
         }
-        
-        
-        
+        else if collectionView == cartCV
+        {
+            cell = collectionView.dequeueReusableCellWithReuseIdentifier("cartCell",forIndexPath: indexPath) as UICollectionViewCell
+            let imageName = appDelegate.cartJson.products[indexPath.row].productImage
+            if let cartCell = cell as? cartCollectionViewCell {
+                let url = NSURL(string: imageName)
+                if let img:UIImage = imageCache.objectForKey(url!) as? UIImage {
+                    cartCell.productImageView.image = img
+                }
+                else {
+                    // The image isn't cached, download the img data
+                    // We should perform this in a background thread
+                    let request: NSURLRequest = NSURLRequest(URL: url!)
+                    let mainQueue = NSOperationQueue.mainQueue()
+                    NSURLConnection.sendAsynchronousRequest(request, queue: mainQueue, completionHandler: { (response, data, error) -> Void in
+                        if error == nil {
+                            // Convert the downloaded data in to a UIImage object
+                            let image = UIImage(data: data!)
+                            // Store the image in to our cache
+                            // Update the cell
+                            dispatch_async(dispatch_get_main_queue(), {
+                                cartCell.productImageView.image = image
+                            })
+                        }
+                        else {
+                            print("Error: \(error!.localizedDescription)")
+                        }
+                    })
+                }
+                cartCell.productImageView.layer.cornerRadius = 5.0
+                cartCell.productImageView.clipsToBounds = true
+                cartCell.noOfProducts.layer.cornerRadius = 14.0
+                cartCell.noOfProducts.clipsToBounds = true
+                cartCell.noOfProducts.text = "\(appDelegate.cartJson.products[indexPath.row].numberOfProduct)"
+                totalAmount = 0.0
+                for indexOut in 0...(appDelegate.cartJson.products.count)-1
+                {
+                    if appDelegate.cartJson.products[indexOut].isCustomized == false
+                    {
+                        totalAmount = totalAmount+((appDelegate.cartJson.products[indexOut].productPrice) * Double((appDelegate.cartJson.products[indexOut].numberOfProduct)))
+                    }
+                    else if appDelegate.cartJson.products[indexOut].isCustomized == true
+                    {
+                        var custPrice:Double = 0.0
+                        for indexCatDetails in 0...appDelegate.cartJson.products[indexOut].customizationDetails.CustomizationcategoryDetails.count-1
+                        {
+                            for index in 0...appDelegate.cartJson.products[indexOut].customizationDetails.CustomizationcategoryDetails[indexCatDetails].CategoryValue.count-1                       {
+                                if (appDelegate.cartJson.products[indexOut].customizationDetails.CustomizationcategoryDetails[indexCatDetails].CategoryValue[index].customisationIsSelected)
+                                {
+                                    custPrice = custPrice +  appDelegate.cartJson.products[indexOut].customizationDetails.CustomizationcategoryDetails[indexCatDetails].CategoryValue[index].CustomizationPrice
+                                }
+                            }
+                        }
+                        totalAmount = totalAmount + ((appDelegate.cartJson.products[indexOut].productPrice + custPrice) * Double(appDelegate.cartJson.products[indexOut].numberOfProduct))
+                    }
+                }
+                lblTotalPriceCart.text = "Total ₹\(totalAmount)"
+            }
+      }
         return cell
-        
-        
-        
     }
     
     
@@ -1278,7 +696,7 @@ class OrderPlacementViewController: UIViewController, UICollectionViewDelegate, 
                     if object.CustomizationAvailable == true
                         
                     {
-                        
+                        object.setCustomization.removeAll()
                         for index in 0...object.customizationDetails.CustomizationcategoryDetails.count-1
                             
                         {
@@ -1491,7 +909,7 @@ class OrderPlacementViewController: UIViewController, UICollectionViewDelegate, 
                 {
                     
                     var object = addingItem
-                    
+                    object.setCustomization.removeAll()
                     object.SourceIndex = indexPath.row
                     
                     if object.CustomizationAvailable == true
@@ -1652,6 +1070,10 @@ class OrderPlacementViewController: UIViewController, UICollectionViewDelegate, 
         
     {
         
+        
+        if setSourceType == "Cart"
+        {
+        
         let bounds = UIScreen.mainScreen().bounds
         
         let tapLocation = sender.locationInView(self.menuCV)
@@ -1666,43 +1088,27 @@ class OrderPlacementViewController: UIViewController, UICollectionViewDelegate, 
         
         
         
-        if setSourceType == "Menu"
+
+        
+        
+        
             
-        {
-            
-            if let value = appDelegate.mappedDictionary["\(appDelegate.menuJson.products[indexPath.row].SourceType)"]
+        
                 
-            {
+                var cartIndex:Int = indexPath.row
                 
-                var cartIndex:Int?
+           
                 
-                for index in 0...appDelegate.cartJson.products.count-1
+                
+                
+                if appDelegate.cartJson.products[cartIndex].numberOfProduct > 1
                     
                 {
                     
-                    if value.SourceType == appDelegate.cartJson.products[index].SourceType
-                        
-                    {
-                        
-                        // var arrayOfMappedDictKey = sourcetype.characters.split{$0=="_"}.map(String.init)
-                        
-                        // let index = Int(arrayOfMappedDictKey[0])
-                        
-                        cartIndex = index
-                        
-                    }
-                    
-                }
-                
-                if appDelegate.cartJson.products[cartIndex!].numberOfProduct > 1
-                    
-                {
-                    
-                    appDelegate.cartJson.products[cartIndex!].numberOfProduct--
-                    
-                    self.appDelegate.menuJson.products[indexPath.row].numberOfProduct = 1
+                    appDelegate.cartJson.products[cartIndex].numberOfProduct--
                     
                     self.cartCV.reloadData()
+                    self.menuCV.reloadData()
                     
                     let animationView = UIImageView()
                     
@@ -1716,7 +1122,7 @@ class OrderPlacementViewController: UIViewController, UICollectionViewDelegate, 
                     
                     // animationView.transform = CGAffineTransformMakeScale(3.0, 3.0)
                     
-                    let url = NSURL(string: (appDelegate.menuJson.products[indexPath.row].productImage))
+                    let url = NSURL(string: (appDelegate.cartJson.products[indexPath.row].productImage))
                     
                     if let img:UIImage = imageCache.objectForKey(url!) as? UIImage {
                         
@@ -1767,24 +1173,19 @@ class OrderPlacementViewController: UIViewController, UICollectionViewDelegate, 
                     
                     
                     
-                    
                 }
                     
-                else if appDelegate.cartJson.products[cartIndex!].numberOfProduct == 1
+                else if appDelegate.cartJson.products[cartIndex].numberOfProduct == 1
                     
                 {
                     
-                    
-                    
-                    self.appDelegate.cartJson.products.removeAtIndex(cartIndex!)
-                    
-                    self.appDelegate.mappedDictionary.removeValueForKey("\(appDelegate.menuJson.products[indexPath.row].SourceType)")
-                    
-                    self.appDelegate.menuJson.products[indexPath.row].numberOfProduct = 1
+                    self.appDelegate.mappedDictionary.removeValueForKey("\(appDelegate.cartJson.products[indexPath.row].SourceType)")
                     
                     
                     
-                    self.cartCV.reloadData()
+                    
+                    
+                    
                     
                     let animationView = UIImageView()
                     
@@ -1798,7 +1199,7 @@ class OrderPlacementViewController: UIViewController, UICollectionViewDelegate, 
                     
                     // animationView.transform = CGAffineTransformMakeScale(3.0, 3.0)
                     
-                    let url = NSURL(string: (appDelegate.menuJson.products[indexPath.row].productImage))
+                    let url = NSURL(string: (appDelegate.cartJson.products[indexPath.row].productImage))
                     
                     if let img:UIImage = imageCache.objectForKey(url!) as? UIImage {
                         
@@ -1836,116 +1237,60 @@ class OrderPlacementViewController: UIViewController, UICollectionViewDelegate, 
                             
                             animationView.removeFromSuperview()
                             
-                    })
-                    
-                    
-                    
-                }
-                
-            }
-            
-            
-            
-        }
-        
-        
-        
-        
-        
-        if setSourceType == "Preference"
-            
-        {
-            
-            if let value = appDelegate.mappedDictionary["\(appDelegate.preferenceJson.products[indexPath.row].SourceType)"]
-                
-            {
-                
-                var cartIndex:Int?
-                
-                for index in 0...appDelegate.cartJson.products.count-1
-                    
-                {
-                    
-                    if value.SourceType == appDelegate.cartJson.products[index].SourceType
-                        
-                    {
-                        
-                        // var arrayOfMappedDictKey = sourcetype.characters.split{$0=="_"}.map(String.init)
-                        
-                        // let index = Int(arrayOfMappedDictKey[0])
-                        
-                        cartIndex = index
-                        
-                    }
-                    
-                    
-                    
-                }
-                
-                
-                
-                if appDelegate.cartJson.products[cartIndex!].numberOfProduct > 1
-                    
-                {
-                    
-                    appDelegate.cartJson.products[cartIndex!].numberOfProduct--
-                    
-                    self.cartCV.reloadData()
-                    
-                    let animationView = UIImageView()
-                    
-                    animationView.frame = CGRectMake(bounds.size.width / 2, self.cartCV.frame.origin.y  + self.cartCV.frame.size.height / 2, 0, 0)
-                    
-                    animationView.alpha = 1.0
-                    
-                    self.view.addSubview(animationView)
-                    
-                    //animationView.transform = CGAffineTransformMakeTranslation(bounds.size.width / 2, self.cv.frame.origin.y + self.cv.frame.height )
-                    
-                    // animationView.transform = CGAffineTransformMakeScale(3.0, 3.0)
-                    
-                    let url = NSURL(string: (appDelegate.menuJson.products[indexPath.row].productImage))
-                    
-                    if let img:UIImage = imageCache.objectForKey(url!) as? UIImage {
-                        
-                        // cell.imageView?.image = img as UIImage
-                        
-                        animationView.image = img as UIImage
-                        
-                        
-                        
-                    }
-                    
-                    //cell.itemsimageview.image = UIImage(named: image)
-                    
-                    UIView.animateWithDuration(0.5, delay: 0.0, options: .CurveEaseIn , animations: {
-                        
-                        
-                        
-                        // let translate = CGAffineTransformMakeTranslation(bounds.size.width/2, self.cartCV.frame.origin.y)
-                        
-                        // let scale = CGAffineTransformMakeScale(0.000001, 0.000001)
-                        
-                        animationView.frame = CGRectMake((bounds.size.width / 2) - (cell.productImageView.frame.width / 2), self.menuCV.frame.origin.y + self.menuCV.frame.height/2, cell.productImageView.frame.width, cell.productImageView.frame.height)
-                        
-                        animationView.alpha = 0.5
-                        
-                        
-                        
-                        
-                        
-                        //  animationView.transform = CGAffineTransformConcat(scale, translate)
-                        
-                        }, completion: {(finished:Bool) in
                             
-                            // the code you put here will be compiled once the animation finishes
+                         self.appDelegate.cartJson.products.removeAtIndex(cartIndex)
+                            self.cartCV.reloadData()
+                            self.menuCV.reloadData()
+//                            if !self.appDelegate.cartJson.products.isEmpty
+//                            {
+//                            
+//                            let cartindexPath = NSIndexPath(forRow: indexPath.row-1, inSection: 0)
+//                                print(indexPath.row)
+//                                 print(cartindexPath.row)
+//                            let cartSelectedcell = self.cartCV.cellForItemAtIndexPath(cartindexPath)
+//                                
+//                                
+//                                    
+//                                    
+//                                    cartSelectedcell!.transform = CGAffineTransformMakeScale(1.3,1.3)
+//                                    cartSelectedcell!.layer.shadowColor = UIColor.blackColor().CGColor
+//                                    cartSelectedcell!.layer.shadowOffset = CGSizeMake(5, 5)
+//                                    cartSelectedcell!.layer.shadowRadius = 5
+//                                    cartSelectedcell!.layer.shadowOpacity = 1.0
+//                                    cartSelectedcell!.layer.masksToBounds = false
+//                                    
+//                               
+//                            }
                             
-                            
-                            
-                            animationView.removeFromSuperview()
-                            
-                            
-                            
+                            if self.appDelegate.cartJson.products.isEmpty
+                                
+                            {
+                                
+                                self.lblTotalPriceCart.text = ""
+                                 self.menuCV.reloadData()
+                                
+                                self.appDelegate.menuJson = self.appDelegate.originalMenuJson
+                                self.setSourceType = self.appDelegate.PreviousSourceType
+                                if self.setSourceType == "Menu"
+                                    
+                                {
+                                    
+                                    self.btnMenu.setImage(UIImage(named:"Hearts-100.png"), forState: .Normal)
+                                    
+                                }
+                                    
+                                else  if self.setSourceType == "Preference"
+                                    
+                                {
+                                    
+                                    self.btnMenu.setImage(UIImage(named:"menu100_grey.png"), forState: .Normal)
+                                    
+                                }
+                                
+                                self.menuCV.scrollToItemAtIndexPath(NSIndexPath(forItem: self.appDelegate.PreviousSourceItemIndex , inSection: 0), atScrollPosition: UICollectionViewScrollPosition.CenteredHorizontally, animated: true)
+                                
+                                
+                            }
                             
                             
                             
@@ -1957,94 +1302,14 @@ class OrderPlacementViewController: UIViewController, UICollectionViewDelegate, 
                     
                     
                     
-                    
                 }
-                    
-                else if appDelegate.cartJson.products[cartIndex!].numberOfProduct == 1
-                    
-                {
-                    
-                    
-                    
-                    self.appDelegate.cartJson.products.removeAtIndex(cartIndex!)
-                    
-                    self.appDelegate.mappedDictionary.removeValueForKey("\(appDelegate.preferenceJson.products[indexPath.row].SourceType)")
-                    
-                    self.cartCV.reloadData()
-                    
-                    let animationView = UIImageView()
-                    
-                    animationView.frame = CGRectMake(bounds.size.width / 2, self.cartCV.frame.origin.y  + self.cartCV.frame.size.height / 2, 0, 0)
-                    
-                    animationView.alpha = 1.0
-                    
-                    
-                    
-                    
-                    
-                    self.view.addSubview(animationView)
-                    
-                    //animationView.transform = CGAffineTransformMakeTranslation(bounds.size.width / 2, self.cv.frame.origin.y + self.cv.frame.height )
-                    
-                    // animationView.transform = CGAffineTransformMakeScale(3.0, 3.0)
-                    
-                    animationView.image = UIImage(named: (appDelegate.preferenceJson.products[indexPath.row].productImage))
-                    
-                    //cell.itemsimageview.image = UIImage(named: image)
-                    
-                    UIView.animateWithDuration(0.5, delay: 0.0, options: .CurveEaseIn , animations: {
-                        
-                        
-                        
-                        // let translate = CGAffineTransformMakeTranslation(bounds.size.width/2, self.cartCV.frame.origin.y)
-                        
-                        // let scale = CGAffineTransformMakeScale(0.000001, 0.000001)
-                        
-                        animationView.frame = CGRectMake((bounds.size.width / 2) - (cell.productImageView.frame.width / 2), self.menuCV.frame.origin.y + self.menuCV.frame.height/2, cell.productImageView.frame.width, cell.productImageView.frame.height)
-                        
-                        animationView.alpha = 0.5
-                        
-                        
-                        
-                        
-                        
-                        //  animationView.transform = CGAffineTransformConcat(scale, translate)
-                        
-                        }, completion: {(finished:Bool) in
-                            
-                            // the code you put here will be compiled once the animation finishes
-                            
-                            
-                            
-                            animationView.removeFromSuperview()
-                            
-                            
-                            
-                            
-                            
-                            
-                            
-                    })
-                    
-                    
-                    
-                    
-                    
-                }
+
                 
-            }
+           
             
         }
         
-        if appDelegate.cartJson.products.isEmpty
-            
-        {
-            
-            lblTotalPriceCart.text = ""
-            
-            appDelegate.menuJson = appDelegate.originalMenuJson
-            
-        }
+      
         
     }
     
@@ -2100,13 +1365,11 @@ class OrderPlacementViewController: UIViewController, UICollectionViewDelegate, 
             
         else if sender.currentImage  == UIImage(named: "SelectedPreference.png")
             
-        { if (!appDelegate.preferenceJson.products.isEmpty)
+        {
+            if (!appDelegate.preferenceJson.products.isEmpty)
             
         {
-            
-            
-            
-            
+
             
             if self.setSourceType == "Menu"
                 
@@ -2170,7 +1433,7 @@ class OrderPlacementViewController: UIViewController, UICollectionViewDelegate, 
                 
                 appDelegate.menuJson.products[indexMenu].alreadyInPreference = false
                 
-                appDelegate.originalMenuJson.products[indexMenu].alreadyInPreference = true
+                appDelegate.originalMenuJson.products[indexMenu].alreadyInPreference = false
                 
                 removeFromPreference(indexPrefence)
                 
@@ -2182,7 +1445,7 @@ class OrderPlacementViewController: UIViewController, UICollectionViewDelegate, 
                 
                 appDelegate.menuJson.products[indexMenu].alreadyInPreference = false
                 
-                appDelegate.originalMenuJson.products[indexMenu].alreadyInPreference = true
+                appDelegate.originalMenuJson.products[indexMenu].alreadyInPreference = false
                 
                 removeFromPreference(indexPrefence)
                 
@@ -2207,7 +1470,7 @@ class OrderPlacementViewController: UIViewController, UICollectionViewDelegate, 
         var object = appDelegate.menuJson.products[Index]
         
         
-        
+        object.setCustomization.removeAll()
         if object.CustomizationAvailable == true
             
         {
@@ -2223,6 +1486,7 @@ class OrderPlacementViewController: UIViewController, UICollectionViewDelegate, 
                     if (object.customizationDetails.CustomizationcategoryDetails[index].CategoryValue[indexInside].customisationIsSelected)
                         
                     {
+                        
                         
                         object.setCustomization.append(selectedCustomization(catId:object.customizationDetails.CustomizationcategoryDetails[index].CategoryValue[indexInside].customizationCatID ,catName: object.customizationDetails.CustomizationcategoryDetails[index].CategoryValue[indexInside].CategoryValueName, storeAliasName: object.customizationDetails.CustomizationcategoryDetails[index].CategoryValue[indexInside].StoreAliasName, IdCustValueAlias: object.customizationDetails.CustomizationcategoryDetails[index].CategoryValue[indexInside].IdCustomizationValueAlias, price: object.customizationDetails.CustomizationcategoryDetails[index].CategoryValue[indexInside].CustomizationPrice, selected: object.customizationDetails.CustomizationcategoryDetails[index].CategoryValue[indexInside].customisationIsSelected))
                         
@@ -2292,7 +1556,7 @@ class OrderPlacementViewController: UIViewController, UICollectionViewDelegate, 
             appDelegate.preferenceJson.products.append(object)
             
         }
-        
+        print(appDelegate.preferenceJson.products)
         self.menuCV.reloadData()
         
         //        }
@@ -2393,7 +1657,9 @@ class OrderPlacementViewController: UIViewController, UICollectionViewDelegate, 
     
     @IBAction func Click_btnMenu(sender: AnyObject) {
         
-        if setSourceType == "Preference"
+        let fromCart:String = lblTopBarMenu.text!
+        
+        if btnMenu.imageView?.image == UIImage(named:"menu100_grey.png")
             
         {
             let subViews = self.menuCV.subviews
@@ -2411,7 +1677,7 @@ class OrderPlacementViewController: UIViewController, UICollectionViewDelegate, 
             
         }
             
-        else if setSourceType == "Menu"
+        else if btnMenu.imageView?.image == UIImage(named:"Hearts-100.png")
             
         {
             
@@ -2434,6 +1700,28 @@ class OrderPlacementViewController: UIViewController, UICollectionViewDelegate, 
                 
             }
             
+        }
+        
+        if fromCart == "Cart"
+        {
+            let noOfItemsInCart = appDelegate.cartJson.products.count
+            for index in 0...noOfItemsInCart-1
+            {
+                let indexPath = NSIndexPath(forRow: index, inSection: 0)
+                print(indexPath)
+                let cell = cartCV.cellForItemAtIndexPath(indexPath)
+           
+                
+                    UIView.animateWithDuration(0.3, animations: { () -> Void in
+                        
+                        
+                        cell!.transform = CGAffineTransformMakeScale(1,1)
+                        
+                    })
+                
+                
+            }
+         self.menuCV.scrollToItemAtIndexPath(NSIndexPath(forItem: self.appDelegate.PreviousSourceItemIndex , inSection: 0), atScrollPosition: UICollectionViewScrollPosition.CenteredHorizontally, animated: true)
         }
         
         
@@ -2534,7 +1822,7 @@ class OrderPlacementViewController: UIViewController, UICollectionViewDelegate, 
         
         
         
-        let options = ["amount" : "\(Int(self.totalAmount))00", "currency": "INR", "name": "DriveThru", "description": "Starbucks",
+        let options = ["amount" : "\(Int(self.totalAmount))00", "currency": "INR", "name": "DriveThru", "description": appDelegate.MerchantName,
             
             "image": appDelegate.MerchantImageUrlString,
             
@@ -2558,16 +1846,25 @@ class OrderPlacementViewController: UIViewController, UICollectionViewDelegate, 
         blurEffectView.autoresizingMask = [.FlexibleWidth, .FlexibleHeight] // for supporting device rotation
         view.addSubview(blurEffectView)
         
-        indicator.center = view.center
-        blurEffectView.addSubview(indicator)
-        indicator.bringSubviewToFront(view)
-        UIApplication.sharedApplication().networkActivityIndicatorVisible = true
+//        indicator.center = view.center
+//        blurEffectView.addSubview(indicator)
+//        indicator.bringSubviewToFront(view)
+//        UIApplication.sharedApplication().networkActivityIndicatorVisible = true
+//        self.view.userInteractionEnabled = false
+//        indicator.startAnimating()
+        
+        progressBar.center = view.center
+        blurEffectView.addSubview(progressBar)
+        progressBar.bringSubviewToFront(view)
         self.view.userInteractionEnabled = false
-        indicator.startAnimating()
+        progressBar.setProgress(0.2, animated: true)
         
         var orderPlaced:Order = Order()
         
         orderPlaced.order = appDelegate.cartJson
+        orderPlaced.order.ConsumerID = Int(appDelegate.userID)!
+        orderPlaced.order.MerchantID = Int(appDelegate.MerchantId)!
+        
         
         orderPlaced.order.payment.paymentID = payment_id
         
@@ -2589,7 +1886,7 @@ class OrderPlacementViewController: UIViewController, UICollectionViewDelegate, 
             
             
         }
-        
+        progressBar.setProgress(0.3, animated: true)
         saveJsonToRestfull(orderJsonData, url: "http://sqweezy.com/DriveThru/Save_Orderdetails.php")
         isOrderPlaced = true
     }
@@ -2648,7 +1945,7 @@ class OrderPlacementViewController: UIViewController, UICollectionViewDelegate, 
         
         let parameters = ["image": encodedImage, "otherParam": "otherValue"]
         
-        
+        progressBar.setProgress(0.4, animated: true)
         
         let session = NSURLSession.sharedSession()
         
@@ -2675,7 +1972,7 @@ class OrderPlacementViewController: UIViewController, UICollectionViewDelegate, 
         
         
         let dataTask = session.dataTaskWithRequest(request) { data, response, error in
-            
+        self.progressBar.setProgress(0.6, animated: true)
             
             
             var json: [String: AnyObject]!
@@ -2692,10 +1989,12 @@ class OrderPlacementViewController: UIViewController, UICollectionViewDelegate, 
                 
             }
             
+            print(json)
             let OrderDictionary = json as NSDictionary
             
             let result = OrderDictionary.objectForKey("result") as! NSMutableArray
-            
+            print(result)
+            self.progressBar.setProgress(0.8, animated: true)
             for index in 0...result.count-1
                 
             {
@@ -2704,7 +2003,7 @@ class OrderPlacementViewController: UIViewController, UICollectionViewDelegate, 
                     
                 {
                     
-                    self.passingTokenId = tokenID
+                    self.defaults.setObject(tokenID, forKey: "tokenID")
                     
                 }
                 
@@ -2712,7 +2011,7 @@ class OrderPlacementViewController: UIViewController, UICollectionViewDelegate, 
                     
                 {
                     
-                    self.passingOrderId = String(orderID)
+                    self.defaults.setObject(String(orderID), forKey: "orderID")
                     
                 }
                 
@@ -2724,15 +2023,17 @@ class OrderPlacementViewController: UIViewController, UICollectionViewDelegate, 
                 
                 self.appDelegate.mappedDictionary.removeAll()
                 self.view.userInteractionEnabled = true
-                self.indicator.stopAnimating()
+                self.progressBar.setProgress(1.0, animated: true)
+                
+                self.appDelegate.orderedProductDetails = OrderedDetails(json:json)!
+//                self.defaults.setValue(self.appDelegate.orderedProductDetails as? AnyObject, forKey: "OrderedProductDetails")
+               
                 self.performSegueWithIdentifier("segueOrderPlacementToTokenVC", sender: self)
                 self.isOrderPlaced = true
                 
             })
             
         }
-        
-        
         
         dataTask.resume()
         
@@ -2753,14 +2054,37 @@ class OrderPlacementViewController: UIViewController, UICollectionViewDelegate, 
         if (segue.identifier == "SegueOrderPlacementToCustomization")
             
         {
-            
-            let destinationVC = segue.destinationViewController as! customizationViewController
-            
+             let destinationVC = segue.destinationViewController as! customizationViewController
+            if setSourceType == "Menu"
+            {
             var passingItem = appDelegate.menuJson.products[customizationIndex]
             
             passingItem.SourceIndex = customizationIndex
             
             destinationVC.ProductCustomization = passingItem
+                destinationVC.fromSource = "Menu"
+            }
+            else if setSourceType == "Preference"
+            {
+                var passingItem = appDelegate.preferenceJson.products[customizationIndex]
+                
+                passingItem.SourceIndex = customizationIndex
+                passingItem.SourceType = "\(customizationIndex)_Preference"
+                
+                destinationVC.ProductCustomization = passingItem
+                destinationVC.fromSource = "Preference"
+                
+            }
+            else if setSourceType == "Cart"
+            {
+                var passingItem = appDelegate.cartJson.products[customizationIndex]
+                print(passingItem.SourceType)
+                passingItem.SourceIndex = customizationIndex
+                destinationVC.fromSource = "Cart"
+                
+                destinationVC.ProductCustomization = passingItem
+                
+            }
             
         }
         
@@ -2770,9 +2094,7 @@ class OrderPlacementViewController: UIViewController, UICollectionViewDelegate, 
             
             let destinationVC = segue.destinationViewController as! UserTokenViewController
             
-            destinationVC.OrderId = self.passingOrderId
             
-            destinationVC.TokenId = self.passingTokenId
             
         }
         
@@ -2799,10 +2121,52 @@ extension OrderPlacementViewController: UIScrollViewDelegate {
             
             
         }
+        if setSourceType == "Cart"
+        {
+            let noOfItemsInCart = appDelegate.cartJson.products.count
+            let currentIndexpath = self.menuCV.indexPathsForVisibleItems()
+            for index in 0...noOfItemsInCart-1 
+            {
+                let indexPath = NSIndexPath(forRow: index, inSection: 0)
+                print(indexPath)
+                let cell = cartCV.cellForItemAtIndexPath(indexPath)
+                if index == currentIndexpath[0].row
+                {
+                    
+                    UIView.animateWithDuration(0.5, animations: { () -> Void in
+                        
+                        
+                        cell!.transform = CGAffineTransformMakeScale(1.3,1.3)
+                        cell!.layer.shadowColor = UIColor.blackColor().CGColor
+                        cell!.layer.shadowOffset = CGSizeMake(5, 5)
+                        cell!.layer.shadowRadius = 5
+                        cell!.layer.shadowOpacity = 1.0
+                        cell!.layer.masksToBounds = false
+                        
+                    })
+                }
+                    else
+                    {
+                        
+                            
+                            
+                            cell!.transform = CGAffineTransformMakeScale(1,1)
+                            cell!.layer.shadowOpacity = 0.0
+                            
+                        
+                }
+                
+            }
+            
+                
+
+            cartCV.selectItemAtIndexPath(NSIndexPath(forItem: currentIndexpath[0].row, inSection: 0), animated: false, scrollPosition: UICollectionViewScrollPosition.Left)
+        }
+        }
         
     }
     
     
-}
+
 
 

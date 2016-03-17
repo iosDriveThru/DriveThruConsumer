@@ -65,15 +65,38 @@ class LoginViewController: UIViewController, FBSDKLoginButtonDelegate, GIDSignIn
         super.viewDidLoad()
         // Do any additional setup after loading the view.
         
+        var titleText = NSAttributedString(string: "Log in")
+        FacebookLoginView.setAttributedTitle(titleText, forState: UIControlState.Normal)
+        FacebookLoginView.layer.shadowColor = UIColor.blackColor().CGColor
+        FacebookLoginView.layer.shadowOffset = CGSizeMake(5, 5)
+        FacebookLoginView.layer.shadowRadius = 5
+        FacebookLoginView.layer.shadowOpacity = 0.8
+        FacebookLoginView.layer.masksToBounds = false
         
-        if let loggedin: String = defaults.objectForKey("userLoggedIn") as? String
-        {
-            self.userloggedin = loggedin
-        }
-        if self.userloggedin == "true"
-        {
-            self.performSegueWithIdentifier("segLoginview-MapView", sender: self)
-        }
+        signInButton.layer.shadowColor = UIColor.blackColor().CGColor
+        signInButton.layer.shadowOffset = CGSizeMake(5, 5)
+        signInButton.layer.shadowRadius = 5
+        signInButton.layer.shadowOpacity = 0.8
+        signInButton.layer.masksToBounds = false
+        
+        
+//        if let loggedin: String = defaults.objectForKey("userLoggedIn") as? String
+//        {
+//            self.userloggedin = loggedin
+//        }
+//        if let orderProgress:Bool = defaults.objectForKey("isOrderInProgress") as? Bool
+//        {
+//            if orderProgress == true
+//            {
+//                        self.performSegueWithIdentifier("segueLoginToToken", sender: self)
+//                       
+//            }
+//        }
+//
+//        if self.userloggedin == "true"
+//        {
+//            self.performSegueWithIdentifier("segLoginview-MapView", sender: self)
+//        }
         
         
         
@@ -116,10 +139,21 @@ class LoginViewController: UIViewController, FBSDKLoginButtonDelegate, GIDSignIn
         {
             self.userloggedin = loggedin
         }
-        if self.userloggedin == "true"
+        if let orderProgress:Bool = defaults.objectForKey("isOrderInProgress") as? Bool
+                {
+                    if orderProgress == true
+                    {
+                                self.performSegueWithIdentifier("segueLoginToToken", sender: self)
+        
+                    }
+                    
+                }
+       if self.userloggedin == "true"
         {
             self.performSegueWithIdentifier("segLoginview-MapView", sender: self)
         }
+        
+       
     }
     
     override func didReceiveMemoryWarning() {
@@ -305,9 +339,9 @@ class LoginViewController: UIViewController, FBSDKLoginButtonDelegate, GIDSignIn
                 }
                 self.dict = result as! NSDictionary
                 self.facebookId = (self.dict.objectForKey("id") as? String)!
-                self.facebookProfileUrl = "http://graph.facebook.com/\(self.facebookId)/picture?type=large"
+                self.facebookProfileUrl = "https://graph.facebook.com/\(self.facebookId)/picture?type=large"
                 self.saveUserDetailsLocalStorage()
-                self.insertLoginDetails()
+              //  self.insertLoginDetails()
             }
         })
         isFacebookLogin = true
@@ -463,21 +497,22 @@ class LoginViewController: UIViewController, FBSDKLoginButtonDelegate, GIDSignIn
         userFirstName = txtFirstName.text!
         userLastName = txtLastName.text!
         userEmail = txtMailId.text!
+        let  userNumber = txtMobileNumber.text!
         var request:NSMutableURLRequest = NSMutableURLRequest()
         //http://sqweezy.com/DriveThru/create_user.php?fid=15&first_name=sagar&last_name=k&email=sagar@gmail.com&password=123&mobile=8105550288
         if isFacebookLogin == true{
-            request = NSMutableURLRequest(URL: NSURL(string: "http://sqweezy.com/DriveThru/create_user.php?fid=\(facebookId)&first_name=\(userFirstName)&last_name=\(userLastName)&email=\(userEmail)&mobile=\(userPhoneNumber)&image_url=\(facebookProfileUrl)")!)
+            request = NSMutableURLRequest(URL: NSURL(string: "http://sqweezy.com/DriveThru/create_user.php?fid=\(facebookId)&first_name=\(userFirstName)&last_name=\(userLastName)&email=\(userEmail)&mobile=\(userNumber)&image_url=\(facebookId)")!)
         }
         else if appDelegate.isGoogleLogin == true
         {
-            request = NSMutableURLRequest(URL: NSURL(string: "http://sqweezy.com/DriveThru/create_user.php?gid=\(appDelegate.googleID)&first_name=\(userFirstName)&last_name=\(userLastName)&email=\(userEmail)&mobile=\(userPhoneNumber)&image_url=\(appDelegate.userProfilePicture)")!)
-            print(request)
+            request = NSMutableURLRequest(URL: NSURL(string: "http://sqweezy.com/DriveThru/create_user.php?gid=\(appDelegate.googleID)&first_name=\(userFirstName)&last_name=\(userLastName)&email=\(userEmail)&mobile=\(userNumber)&image_url=\(appDelegate.userProfilePicture)")!)
+           
         }
         else
         {
-            request = NSMutableURLRequest(URL: NSURL(string: "http://sqweezy.com/DriveThru/create_user.php?first_name=\(userFirstName)&last_name=\(userLastName)&email=\(userEmail)&mobile=\(userPhoneNumber)")!)
+            request = NSMutableURLRequest(URL: NSURL(string: "http://sqweezy.com/DriveThru/create_user.php?first_name=\(userFirstName)&last_name=\(userLastName)&email=\(userEmail)&mobile=\(userNumber)")!)
         }
-        
+         print(request)
         
         let session = NSURLSession.sharedSession()
         request.HTTPMethod = "GET"

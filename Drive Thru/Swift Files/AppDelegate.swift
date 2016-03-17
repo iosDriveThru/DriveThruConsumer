@@ -9,10 +9,19 @@
 import UIKit
 import CoreData
 import GoogleMaps
+import PusherSwift
+import CoreLocation
+import Firebase
 
 @UIApplicationMain
-class AppDelegate: UIResponder, UIApplicationDelegate, GIDSignInDelegate {
+class AppDelegate: UIResponder, UIApplicationDelegate, GIDSignInDelegate, CLLocationManagerDelegate{
     let defaults = NSUserDefaults.standardUserDefaults()
+    var locationManagerActive = CLLocationManager()
+    var locationManagerBackground = CLLocationManager()
+    var spotmessagesRef = Firebase(url: "https://blistering-torch-3715.firebaseio.com/storegeo/store")
+    var currentLatitude:Double = 12.919687
+    var currentLongitude:Double = 77.592188
+    
     var userID:String = ""
     var window: UIWindow?
     var userDetailsObject = [NSManagedObject]()
@@ -29,7 +38,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate, GIDSignInDelegate {
     var userPhoneNumber:Int = 0
     var isGoogleLogin:Bool = false
     var googleID: String = ""
-    // var cartProductListArray: [productDetails] = []
     var cartJson:Cart = Cart()
     var menuJson: Menu = Menu()
     var originalMenuJson: Menu = Menu()
@@ -38,44 +46,43 @@ class AppDelegate: UIResponder, UIApplicationDelegate, GIDSignInDelegate {
     var isPreferenceChanged:Bool = false
     var MerchantImageUrlString:String = ""
     var MerchantId:String = ""
-    // var cart:Cart = Cart()
+    var MerchantName:String = ""
+    var PreviousSourceType:String = ""
+    var PreviousSourceItemIndex:Int = Int()
     var mappedDictionary: Dictionary<String, productDetails> = [:]
-    
+    var orderedProductDetails:OrderedDetails = OrderedDetails()
     override init()
     {
         GMSServices.provideAPIKey("AIzaSyAv74NNKnbQ4uaMlOlgngeUpFTl0wjaoQ8")
     }
+    
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
+        // Override point for customization after application launch.
         if let userid: String = defaults.objectForKey("user_ID") as? String
         {
            self.userID = userid
         }
+        pushNotification()
+        
+        //Local Notification Setup Code
         let userNotificationTypes:UIUserNotificationType = ([UIUserNotificationType.Alert, UIUserNotificationType.Badge, UIUserNotificationType.Sound])
         let settings:UIUserNotificationSettings = UIUserNotificationSettings(forTypes: userNotificationTypes, categories: nil)
         application.registerUserNotificationSettings(settings)
         UIApplication.sharedApplication().backgroundRefreshStatus
+        //End-Local Notification Setup Code
         
-        // Override point for customization after application launch.
+        //Google and Facebook Code
         var configureError: NSError?
         GGLContext.sharedInstance().configureWithError(&configureError)
         assert(configureError == nil, "Error configuring Google services: \(configureError)")
         GIDSignIn.sharedInstance().delegate = self
-        
         return FBSDKApplicationDelegate.sharedInstance().application(application, didFinishLaunchingWithOptions: launchOptions)
+        //End-Google and Facebook Code
     }
     
     func application(application: UIApplication, openURL url: NSURL, sourceApplication: String?, annotation: AnyObject) -> Bool {
         return (FBSDKApplicationDelegate.sharedInstance().application(application,openURL:url,sourceApplication: sourceApplication, annotation: annotation) || GIDSignIn.sharedInstance().handleURL(url, sourceApplication: sourceApplication, annotation: annotation))
     }
-    
-    //    func application(app: UIApplication, openURL url: NSURL, options: [String : AnyObject]) -> Bool {
-    //
-    //
-    //        return GIDSignIn.sharedInstance().handleURL(url,
-    //            sourceApplication: options[UIApplicationOpenURLOptionsSourceApplicationKey] as! String?,
-    //            annotation: options[UIApplicationOpenURLOptionsAnnotationKey])
-    //    }
-    
     
     func applicationWillResignActive(application: UIApplication) {
         // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.
@@ -85,10 +92,33 @@ class AppDelegate: UIResponder, UIApplicationDelegate, GIDSignInDelegate {
     func applicationDidEnterBackground(application: UIApplication) {
         // Use this method to release shared resources, save user data, invalidate timers, and store enough application state information to restore your application to its current state in case it is terminated later.
         // If your application supports background execution, this method is called instead of applicationWillTerminate: when the user quits.
+        
+        self.locationManagerActive.delegate = self
+        self.locationManagerBackground.delegate = self
+        
+        locationManagerActive.requestAlwaysAuthorization()
+        locationManagerActive.requestWhenInUseAuthorization()
+        locationManagerBackground.requestAlwaysAuthorization()
+        locationManagerBackground.requestWhenInUseAuthorization()
+        locationManagerActive.startUpdatingLocation()
+        locationManagerActive.startMonitoringVisits()
+        locationManagerActive.desiredAccuracy = kCLLocationAccuracyBest
     }
     
     func applicationWillEnterForeground(application: UIApplication) {
         // Called as part of the transition from the background to the inactive state; here you can undo many of the changes made on entering the background.
+        application.beginBackgroundTaskWithExpirationHandler{}
+        locationManagerActive.delegate = self
+        locationManagerBackground.stopUpdatingLocation()
+        locationManagerBackground.stopMonitoringVisits()
+        locationManagerActive.requestAlwaysAuthorization()
+        locationManagerActive.requestWhenInUseAuthorization()
+        locationManagerBackground.requestAlwaysAuthorization()
+        locationManagerBackground.requestWhenInUseAuthorization()
+        locationManagerActive.startUpdatingLocation()
+        locationManagerActive.startMonitoringVisits()
+        locationManagerActive.distanceFilter = 10.0
+        locationManagerBackground.desiredAccuracy = kCLLocationAccuracyBest
     }
     
     func applicationDidBecomeActive(application: UIApplication) {
@@ -99,24 +129,25 @@ class AppDelegate: UIResponder, UIApplicationDelegate, GIDSignInDelegate {
     func applicationWillTerminate(application: UIApplication) {
         // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
         // Saves changes in the application's managed object context before the application terminates.
-        
-        
-        
-        let prefJsonObject = preferenceJson.toJSON()
-        var prefJsonData: NSData!
-        do {
-            prefJsonData = try NSJSONSerialization.dataWithJSONObject(prefJsonObject!, options: NSJSONWritingOptions())
-            
-        } catch {
-            print(error)
-            
-        }
-        
-        
-        DataManager.saveJsonToRestfull(prefJsonData, url: "http://sqweezy.com/DriveThru/save_user_preferences.php")
+        DataManager.setPreference()
         self.saveContext()
     }
-    //GoogleSignIn
+    func locationManager(manager: CLLocationManager, didUpdateToLocation newLocation: CLLocation, fromLocation oldLocation: CLLocation) {
+        currentLatitude = manager.location!.coordinate.latitude
+        currentLongitude = manager.location!.coordinate.longitude
+        
+        
+        
+    print("locationUpdate")
+        
+        spotmessagesRef.childByAppendingPath(sender).childByAppendingPath("spot").setValue([
+            "parklat":currentLatitude,
+            "parklng":currentLongitude,
+            "user_ID":userID,
+            ])
+    }
+    
+    //GoogleSignIn Get User Deatils
     func signIn(signIn: GIDSignIn!, didSignInForUser user: GIDGoogleUser!,
         withError error: NSError!) {
             if (error == nil) {
@@ -129,9 +160,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, GIDSignInDelegate {
                 {
                     userLoginId = userId
                     googleID = userId
-                    // LoginView.googleId = userLoginId
-                    
-                }// For
+                }
                 if let email = user.profile.email
                 {
                     self.userEmail = email
@@ -152,6 +181,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, GIDSignInDelegate {
             }
             
     }
+    //End- GoogleSignIn Get User Deatils
     
     func signIn(signIn: GIDSignIn!, didDisconnectWithUser user:GIDGoogleUser!,
         withError error: NSError!) {
@@ -161,6 +191,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, GIDSignInDelegate {
             // [END_EXCLUDE]
     }
     
+    //Save User Deatils in Local Database using CoreData
     func saveUserDetailsLocalStorage() {
         let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
         let managedContext = appDelegate.managedObjectContext
@@ -176,19 +207,50 @@ class AppDelegate: UIResponder, UIApplicationDelegate, GIDSignInDelegate {
         user.setValue(self.userLoaction, forKey: "location")
         user.setValue(self.userProfilePicture, forKey: "userProfileImage")
         userDetailsObject.append(user)
-        //        do {
-        //            try managedContext.save()
-        //            userDetailsObject.append(user)
-        //        } catch let error as NSError  {
-        //            print("Could not save \(error), \(error.userInfo)")
-        //        }
-        //defaults.setValue("true", forKey: "userLoggedIn")
         let storyboard = UIStoryboard(name: "Main", bundle: nil)
         let viewController = self.window!.rootViewController!.storyboard!.instantiateViewControllerWithIdentifier("LoginViewController")
         self.window?.rootViewController?.presentViewController(viewController, animated: true, completion: {})
-        // viewController.performSegueWithIdentifier("segLoginview-MapView", sender: self)
-        
     }
+    //End- Save User Deatils in Local Database using CoreData
+    
+    //Set up Push Notification For user Order Status- Token screen
+    func pushNotification()
+    {
+        let pusher = Pusher(key: "1f006f9bd40000fbe5e8", options: ["secret": "118ce01e86e2ff6aa374"])
+        pusher.connect()
+        let chan = pusher.subscribe("consumer_\(self.userID)")
+        chan.bind("consumer_event", callback: { (data: AnyObject?) -> Void in
+            
+            self.defaults.setValue(data, forKeyPath: "pusherValueChanged")
+            if let vstatus = data?.objectForKey("order_status") as? String
+            {
+                if vstatus == "placed"
+                {
+                    self.defaults.setBool(true, forKey: "isOrderInProgress")
+                }
+                else  if vstatus == "inprogress"
+                {
+                    self.defaults.setBool(true, forKey: "isOrderInProgress")
+                }
+                else  if vstatus == "for_delivery"
+                {
+                    self.defaults.setBool(true, forKey: "isOrderInProgress")
+                }
+                else  if vstatus == "ready_to_pickup"
+                {
+                    self.defaults.setBool(true, forKey: "isOrderInProgress")
+                }
+                else  if vstatus == "picked_up"
+                {
+                    self.defaults.setBool(false, forKey: "isOrderInProgress")
+                }
+             }
+         })
+    }
+    //End- Set up Push Notification For user Order Status- Token screen
+    
+    
+    
     
     
     // MARK: - Core Data stack

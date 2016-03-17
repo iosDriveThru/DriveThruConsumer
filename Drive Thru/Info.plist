@@ -100,6 +100,8 @@
 	<string>Drive-thru would like to access your location</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>Drive-thru would like to access your location</string>
+	<key>UIApplicationExitsOnSuspend</key>
+	<false/>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>fetch</string>
