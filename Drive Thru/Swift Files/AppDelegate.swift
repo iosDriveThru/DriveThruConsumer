@@ -135,15 +135,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate, GIDSignInDelegate, CLLoca
     func locationManager(manager: CLLocationManager, didUpdateToLocation newLocation: CLLocation, fromLocation oldLocation: CLLocation) {
         currentLatitude = manager.location!.coordinate.latitude
         currentLongitude = manager.location!.coordinate.longitude
+        print("locationUpdate")
         
-        
-        
-    print("locationUpdate")
-        
-        spotmessagesRef.childByAppendingPath(sender).childByAppendingPath("spot").setValue([
+        spotmessagesRef.childByAppendingPath(userID).setValue([
             "parklat":currentLatitude,
-            "parklng":currentLongitude,
-            "user_ID":userID,
+            "parklng":currentLongitude
+            //"user_ID":userID,
             ])
     }
     

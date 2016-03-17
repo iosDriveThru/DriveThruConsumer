@@ -64,6 +64,7 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, GMSMapView
         
         //  setupGeoFireForCurrentLocation(currentLatitude, lng: currentLongitude)
         // test yogi
+
     }
     
     override func didReceiveMemoryWarning() {
