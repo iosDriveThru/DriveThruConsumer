@@ -108,6 +108,7 @@ class MyStoresViewController: UIViewController , GMSMapViewDelegate, UISearchBar
         return true
     }
     
+     
     func displayMerchantImage()
     {
         let imageName = self.appDelegate.MerchantImageUrlString

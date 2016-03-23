@@ -72,10 +72,11 @@
 		AC115D6B1C718FA3003ABA10 /* KioskReady_green.png in Resources */ = {isa = PBXBuildFile; fileRef = AC115D661C718FA3003ABA10 /* KioskReady_green.png */; };
 		AC115D6C1C718FA3003ABA10 /* OrderPlaced_green.png in Resources */ = {isa = PBXBuildFile; fileRef = AC115D671C718FA3003ABA10 /* OrderPlaced_green.png */; };
 		AC115D6D1C718FA3003ABA10 /* PickedUp_green.png in Resources */ = {isa = PBXBuildFile; fileRef = AC115D681C718FA3003ABA10 /* PickedUp_green.png */; };
-		AC115D6E1C718FA3003ABA10 /* PickupReady_green.png in Resources */ = {isa = PBXBuildFile; fileRef = AC115D691C718FA3003ABA10 /* PickupReady_green.png */; };
-		AC115D6F1C718FA3003ABA10 /* Preparation_Green.png in Resources */ = {isa = PBXBuildFile; fileRef = AC115D6A1C718FA3003ABA10 /* Preparation_Green.png */; };
 		AC115D711C719CAA003ABA10 /* SelectedPreference.png in Resources */ = {isa = PBXBuildFile; fileRef = AC115D701C719CAA003ABA10 /* SelectedPreference.png */; };
 		AC1421D71C6F994900A7F0D4 /* getMenu.json in Resources */ = {isa = PBXBuildFile; fileRef = AC1421D61C6F994900A7F0D4 /* getMenu.json */; };
+		AC2A95621C9FC66400B4A7BA /* PICKED_UP_Green.png in Resources */ = {isa = PBXBuildFile; fileRef = AC2A955F1C9FC66400B4A7BA /* PICKED_UP_Green.png */; };
+		AC2A95631C9FC66400B4A7BA /* On-The-Go_Premium.png in Resources */ = {isa = PBXBuildFile; fileRef = AC2A95601C9FC66400B4A7BA /* On-The-Go_Premium.png */; };
+		AC2A95641C9FC66400B4A7BA /* Prepration_Green.png in Resources */ = {isa = PBXBuildFile; fileRef = AC2A95611C9FC66400B4A7BA /* Prepration_Green.png */; };
 		AC69AC8C1C4F4EC600C6DD49 /* menuCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC69AC8B1C4F4EC600C6DD49 /* menuCollectionViewCell.swift */; };
 		AC69AC8E1C4F4EF600C6DD49 /* cartCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC69AC8D1C4F4EF600C6DD49 /* cartCollectionViewCell.swift */; };
 		AC6B4D851C4E4A6C002622D1 /* OrderPlacementViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC6B4D841C4E4A6C002622D1 /* OrderPlacementViewController.swift */; };
@@ -115,7 +116,7 @@
 		28091D891C32767B003B7A8E /* AppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = AppDelegate.swift; path = "Swift Files/AppDelegate.swift"; sourceTree = "<group>"; };
 		28091D8B1C32784E003B7A8E /* LoginViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = LoginViewController.swift; path = "Swift Files/LoginViewController.swift"; sourceTree = "<group>"; };
 		28091D8D1C3281A0003B7A8E /* Drive Thru-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Drive Thru-Bridging-Header.h"; sourceTree = SOURCE_ROOT; };
-		28EC3CAA1C32682000D707D7 /* Drive Thru.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Drive Thru.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		28EC3CAA1C32682000D707D7 /* DriveThru.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DriveThru.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		28EC3CB21C32682000D707D7 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		28EC3CB51C32682000D707D7 /* Drive_Thru.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Drive_Thru.xcdatamodel; sourceTree = "<group>"; };
 		28EC3CB71C32682000D707D7 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -184,10 +185,11 @@
 		AC115D661C718FA3003ABA10 /* KioskReady_green.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = KioskReady_green.png; path = Images/KioskReady_green.png; sourceTree = "<group>"; };
 		AC115D671C718FA3003ABA10 /* OrderPlaced_green.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = OrderPlaced_green.png; path = Images/OrderPlaced_green.png; sourceTree = "<group>"; };
 		AC115D681C718FA3003ABA10 /* PickedUp_green.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = PickedUp_green.png; path = Images/PickedUp_green.png; sourceTree = "<group>"; };
-		AC115D691C718FA3003ABA10 /* PickupReady_green.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = PickupReady_green.png; path = Images/PickupReady_green.png; sourceTree = "<group>"; };
-		AC115D6A1C718FA3003ABA10 /* Preparation_Green.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = Preparation_Green.png; path = Images/Preparation_Green.png; sourceTree = "<group>"; };
 		AC115D701C719CAA003ABA10 /* SelectedPreference.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = SelectedPreference.png; path = Images/SelectedPreference.png; sourceTree = "<group>"; };
 		AC1421D61C6F994900A7F0D4 /* getMenu.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = getMenu.json; sourceTree = "<group>"; };
+		AC2A955F1C9FC66400B4A7BA /* PICKED_UP_Green.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = PICKED_UP_Green.png; path = Images/PICKED_UP_Green.png; sourceTree = "<group>"; };
+		AC2A95601C9FC66400B4A7BA /* On-The-Go_Premium.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "On-The-Go_Premium.png"; path = "Images/On-The-Go_Premium.png"; sourceTree = "<group>"; };
+		AC2A95611C9FC66400B4A7BA /* Prepration_Green.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = Prepration_Green.png; path = Images/Prepration_Green.png; sourceTree = "<group>"; };
 		AC69AC8B1C4F4EC600C6DD49 /* menuCollectionViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = menuCollectionViewCell.swift; path = "Swift Files/menuCollectionViewCell.swift"; sourceTree = "<group>"; };
 		AC69AC8D1C4F4EF600C6DD49 /* cartCollectionViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = cartCollectionViewCell.swift; path = "Swift Files/cartCollectionViewCell.swift"; sourceTree = "<group>"; };
 		AC6B4D841C4E4A6C002622D1 /* OrderPlacementViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = OrderPlacementViewController.swift; path = "Swift Files/OrderPlacementViewController.swift"; sourceTree = "<group>"; };
@@ -285,7 +287,7 @@
 		28EC3CAB1C32682000D707D7 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				28EC3CAA1C32682000D707D7 /* Drive Thru.app */,
+				28EC3CAA1C32682000D707D7 /* DriveThru.app */,
 				28EC3CC11C32682100D707D7 /* Drive ThruTests.xctest */,
 				28EC3CCC1C32682100D707D7 /* Drive ThruUITests.xctest */,
 			);
@@ -343,6 +345,9 @@
 		ACF52C011C523BD500E3F07E /* Images */ = {
 			isa = PBXGroup;
 			children = (
+				AC2A955F1C9FC66400B4A7BA /* PICKED_UP_Green.png */,
+				AC2A95601C9FC66400B4A7BA /* On-The-Go_Premium.png */,
+				AC2A95611C9FC66400B4A7BA /* Prepration_Green.png */,
 				9AB434351C7C372800982AB5 /* Account.png */,
 				AC0E84351C804F8A00926B8B /* Back-100.png */,
 				9AB434321C7C372800982AB5 /* baselocation-100.png */,
@@ -371,8 +376,6 @@
 				AC115D671C718FA3003ABA10 /* OrderPlaced_green.png */,
 				AC115D681C718FA3003ABA10 /* PickedUp_green.png */,
 				9A54D5B21C5B80B300010D41 /* PickedUp.png */,
-				AC115D691C718FA3003ABA10 /* PickupReady_green.png */,
-				AC115D6A1C718FA3003ABA10 /* Preparation_Green.png */,
 				9AFB3D081C6A053500A55AAF /* Product_default_Image.png */,
 				ACF52C281C5242C600E3F07E /* Promotions_grey-100.png */,
 				9A54D5B31C5B80B300010D41 /* ReadyForPickup3.png */,
@@ -422,7 +425,7 @@
 			);
 			name = "Drive Thru";
 			productName = "Drive Thru";
-			productReference = 28EC3CAA1C32682000D707D7 /* Drive Thru.app */;
+			productReference = 28EC3CAA1C32682000D707D7 /* DriveThru.app */;
 			productType = "com.apple.product-type.application";
 		};
 		28EC3CC01C32682100D707D7 /* Drive ThruTests */ = {
@@ -473,7 +476,7 @@
 				TargetAttributes = {
 					28EC3CA91C32682000D707D7 = {
 						CreatedOnToolsVersion = 7.1;
-						DevelopmentTeam = J3D98H633R;
+						DevelopmentTeam = LMYKZ4EGC6;
 						SystemCapabilities = {
 							com.apple.BackgroundModes = {
 								enabled = 1;
@@ -531,19 +534,19 @@
 				9AB7CD651C85BF19003C6B61 /* Token.png in Resources */,
 				9AFB3D101C6A053500A55AAF /* Cancel_Customization.png in Resources */,
 				9AB4343C1C7C372800982AB5 /* Share-100.png in Resources */,
-				AC115D6E1C718FA3003ABA10 /* PickupReady_green.png in Resources */,
 				9A54D5B51C5B80B300010D41 /* cooking.png in Resources */,
 				9A54D5B41C5B80B300010D41 /* Cart.png in Resources */,
 				9AE30E771C69E6A600DB155F /* star_full.png in Resources */,
 				AC1421D71C6F994900A7F0D4 /* getMenu.json in Resources */,
-				AC115D6F1C718FA3003ABA10 /* Preparation_Green.png in Resources */,
 				ACF52C051C523C7D00E3F07E /* Location.gpx in Resources */,
 				ACF52C381C5242C600E3F07E /* Menu_Cutlery_Grey-100.png in Resources */,
 				9AB4343A1C7C372800982AB5 /* User_Settings.ico in Resources */,
 				9A54D5B71C5B80B300010D41 /* PickedUp.png in Resources */,
 				9AB434381C7C372800982AB5 /* baselocation-100.png in Resources */,
+				AC2A95621C9FC66400B4A7BA /* PICKED_UP_Green.png in Resources */,
 				9A54D5A91C5B449100010D41 /* UnselectedPreference.png in Resources */,
 				9AFB3D111C6A053500A55AAF /* Clear_customization-100.png in Resources */,
+				AC2A95631C9FC66400B4A7BA /* On-The-Go_Premium.png in Resources */,
 				9AE30E761C69E6A600DB155F /* star_blank.png in Resources */,
 				AC115D6B1C718FA3003ABA10 /* KioskReady_green.png in Resources */,
 				9AB434391C7C372800982AB5 /* Stores-100.png in Resources */,
@@ -556,6 +559,7 @@
 				9A54D5AC1C5B449100010D41 /* Customize_UnSelected.png in Resources */,
 				9AF76DA41C6497760089D482 /* CarFilled.png in Resources */,
 				ACF52C331C5242C600E3F07E /* Hearts-100.png in Resources */,
+				AC2A95641C9FC66400B4A7BA /* Prepration_Green.png in Resources */,
 				28EC3CB81C32682000D707D7 /* Assets.xcassets in Resources */,
 				9AE30E6A1C69C83000DB155F /* Menu_onMap_100.png in Resources */,
 				9AB434401C7C6F4D00982AB5 /* history.png in Resources */,
@@ -822,8 +826,8 @@
 				INFOPLIST_FILE = "Drive Thru/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 9.1;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = "com.nanitesolutions.Drive-Thru";
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_BUNDLE_IDENTIFIER = com.nanitesolutions.DriveThru;
+				PRODUCT_NAME = DriveThru;
 				PROVISIONING_PROFILE = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "Drive Thru-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -848,8 +852,8 @@
 				INFOPLIST_FILE = "Drive Thru/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 9.1;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = "com.nanitesolutions.Drive-Thru";
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_BUNDLE_IDENTIFIER = com.nanitesolutions.DriveThru;
+				PRODUCT_NAME = DriveThru;
 				PROVISIONING_PROFILE = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "Drive Thru-Bridging-Header.h";
 			};

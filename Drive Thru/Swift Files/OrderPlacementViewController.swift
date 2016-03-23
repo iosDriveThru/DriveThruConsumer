@@ -239,6 +239,21 @@ class OrderPlacementViewController: UIViewController, UICollectionViewDelegate, 
         }
     }
     
+    func collectionView(collectionView: UICollectionView,
+        layout collectionViewLayout: UICollectionViewLayout,
+        sizeForItemAtIndexPath indexPath: NSIndexPath) -> CGSize {
+            var cellSize:CGSize = CGSize()
+            if collectionView == menuCV
+            {
+            cellSize = CGSizeMake(collectionView.bounds.size.width, collectionView.bounds.size.height-20)
+            }
+            else if collectionView == cartCV
+            {
+             cellSize =  CGSizeMake(collectionView.bounds.size.width/4, collectionView.bounds.size.height-10)
+            }
+            
+         return cellSize
+    }
     
     func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
         var cell = UICollectionViewCell()
@@ -582,7 +597,7 @@ class OrderPlacementViewController: UIViewController, UICollectionViewDelegate, 
                 }
                 cartCell.productImageView.layer.cornerRadius = 5.0
                 cartCell.productImageView.clipsToBounds = true
-                cartCell.noOfProducts.layer.cornerRadius = 14.0
+                cartCell.noOfProducts.layer.cornerRadius = 12.0
                 cartCell.noOfProducts.clipsToBounds = true
                 cartCell.noOfProducts.text = "\(appDelegate.cartJson.products[indexPath.row].numberOfProduct)"
                 totalAmount = 0.0
@@ -1716,12 +1731,13 @@ class OrderPlacementViewController: UIViewController, UICollectionViewDelegate, 
                         
                         
                         cell!.transform = CGAffineTransformMakeScale(1,1)
-                        
+                        cell!.layer.shadowOpacity = 0.0
                     })
                 
                 
             }
          self.menuCV.scrollToItemAtIndexPath(NSIndexPath(forItem: self.appDelegate.PreviousSourceItemIndex , inSection: 0), atScrollPosition: UICollectionViewScrollPosition.CenteredHorizontally, animated: true)
+            cartCV.reloadData()
         }
         
         
@@ -2040,8 +2056,91 @@ class OrderPlacementViewController: UIViewController, UICollectionViewDelegate, 
     }
     
     
+    @IBAction func clickBtnMenuMap(sender: AnyObject) {
+        if appDelegate.cartJson.products.isEmpty
+        {
+        self.performSegueWithIdentifier("SegueOrderPlacementToMapView", sender: self)
+        }
+        else
+        {
+            let alertController = UIAlertController(title: "Drive-Thru", message: "Cart will be cleared!", preferredStyle: .Alert)
+            
+            // Create the actions
+            
+            let okAction = UIAlertAction(title: "OK", style: UIAlertActionStyle.Default)
+                
+                {
+                    
+                    UIAlertAction in
+                    self.appDelegate.cartJson.products = []
+                    self.performSegueWithIdentifier("SegueOrderPlacementToMapView", sender: self)
+                    
+            }
+            let cancelAction = UIAlertAction(title: "Cancel", style: UIAlertActionStyle.Default)
+                
+                {
+                    
+                    UIAlertAction in
+                    
+            }
+            
+            
+            
+            // Add the actions
+            alertController.addAction(okAction)
+            alertController.addAction(cancelAction)
+            
+            // Present the controller
+            
+            self.presentViewController(alertController, animated: true, completion: nil)
+            
+            
+        }
+        
+    }
     
     
+    @IBAction func clickBtnMenuHome(sender: AnyObject) {
+        if appDelegate.cartJson.products.isEmpty
+        {
+        self.performSegueWithIdentifier("SegueOrderPlacementToHome", sender: self)
+        }
+        
+        else
+        {
+            let alertController = UIAlertController(title: "Drive-Thru", message: "Cart will be cleared!", preferredStyle: .Alert)
+            
+            // Create the actions
+            
+            let okAction = UIAlertAction(title: "OK", style: UIAlertActionStyle.Default)
+                
+                {
+                    
+                    UIAlertAction in
+                    self.appDelegate.cartJson.products = []
+                    self.performSegueWithIdentifier("SegueOrderPlacementToMapView", sender: self)
+                    
+            }
+            let cancelAction = UIAlertAction(title: "Cancel", style: UIAlertActionStyle.Default)
+                
+                {
+                    
+                    UIAlertAction in
+                    
+            }
+            
+            
+            
+            // Add the actions
+            alertController.addAction(okAction)
+            alertController.addAction(cancelAction)
+            
+            // Present the controller
+            
+            self.presentViewController(alertController, animated: true, completion: nil)
+        }
+        
+    }
     
     // In a storyboard-based application, you will often want to do a little preparation before navigation
     

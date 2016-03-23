@@ -486,9 +486,6 @@ extension customizationViewController: UICollectionViewDelegate, UICollectionVie
         // customCell.cv.clearsContextBeforeDrawing = true
         tableView.reloadData()
         
-        
-        
-        
     }
     
     

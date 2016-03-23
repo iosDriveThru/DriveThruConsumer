@@ -39,7 +39,7 @@
 			<string>Editor</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>com.nanitesolutions.Drive-Thru</string>
+				<string>com.nanitesolutions.DriveThru</string>
 			</array>
 		</dict>
 	</array>

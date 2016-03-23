@@ -1,4 +1,5 @@
 PODS:
+  - Batch (1.5.1)
   - Bolts (1.6.0):
     - Bolts/AppLinks (= 1.6.0)
     - Bolts/Tasks (= 1.6.0)
@@ -50,6 +51,7 @@ PODS:
   - Starscream (1.1.1)
 
 DEPENDENCIES:
+  - Batch (~> 1.5)
   - FBSDKCoreKit
   - FBSDKLoginKit
   - FBSDKShareKit
@@ -61,6 +63,7 @@ DEPENDENCIES:
   - PusherSwift
 
 SPEC CHECKSUMS:
+  Batch: 968cfffd316d2f0e8cd652c97608c6c19e2ec099
   Bolts: f52a250053bb517ca874523c3913776359ab3def
   CryptoSwift: d382228d6301c09474132417878a741c2a2e68cd
   FBSDKCoreKit: aee20b6d9855f15b618d4fddd1a5ad45f5a4a59d

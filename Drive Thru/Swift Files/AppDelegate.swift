@@ -12,6 +12,7 @@ import GoogleMaps
 import PusherSwift
 import CoreLocation
 import Firebase
+import Batch
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate, GIDSignInDelegate, CLLocationManagerDelegate{
@@ -76,10 +77,18 @@ class AppDelegate: UIResponder, UIApplicationDelegate, GIDSignInDelegate, CLLoca
         GGLContext.sharedInstance().configureWithError(&configureError)
         assert(configureError == nil, "Error configuring Google services: \(configureError)")
         GIDSignIn.sharedInstance().delegate = self
+        
+        //Batch
+        BatchPush.setupPush()
+        Batch.startWithAPIKey("DEV56EA77F9A9DFEA9CDDD38271862")
+        BatchPush.registerForRemoteNotifications()
         return FBSDKApplicationDelegate.sharedInstance().application(application, didFinishLaunchingWithOptions: launchOptions)
         //End-Google and Facebook Code
     }
-    
+    func application(application: UIApplication, didReceiveRemoteNotification userInfo: [NSObject : AnyObject])
+    {
+        BatchPush.dismissNotifications()
+    }
     func application(application: UIApplication, openURL url: NSURL, sourceApplication: String?, annotation: AnyObject) -> Bool {
         return (FBSDKApplicationDelegate.sharedInstance().application(application,openURL:url,sourceApplication: sourceApplication, annotation: annotation) || GIDSignIn.sharedInstance().handleURL(url, sourceApplication: sourceApplication, annotation: annotation))
     }

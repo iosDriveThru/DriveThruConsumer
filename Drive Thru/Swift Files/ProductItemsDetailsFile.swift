@@ -204,10 +204,13 @@ public struct Cart: Decodable, Encodable {
 
 //Payment
 
-public struct Payment  {
+public struct Payment: Encodable  {
     
     
     public var paymentID:String
+    public var amount:Double
+    public var storeTax:Double
+    public var totalPrice:Double
     
     
     
@@ -215,8 +218,18 @@ public struct Payment  {
     public init()
     {
         
-        self.paymentID = ""
+        paymentID = ""
+        amount = 0.0
+        storeTax = 0.0
+        totalPrice = 0.0
         
+    }
+    
+    public func toJSON() -> JSON? {
+        return jsonify([
+            "payment_ID" ~~>  self.paymentID
+            
+            ])
     }
     
     

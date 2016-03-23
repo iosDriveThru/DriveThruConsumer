@@ -15,7 +15,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "28EC3CA91C32682000D707D7"
-               BuildableName = "Drive Thru.app"
+               BuildableName = "DriveThru.app"
                BlueprintName = "Drive Thru"
                ReferencedContainer = "container:Drive Thru.xcodeproj">
             </BuildableReference>
@@ -53,7 +53,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "28EC3CA91C32682000D707D7"
-            BuildableName = "Drive Thru.app"
+            BuildableName = "DriveThru.app"
             BlueprintName = "Drive Thru"
             ReferencedContainer = "container:Drive Thru.xcodeproj">
          </BuildableReference>
@@ -76,7 +76,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "28EC3CA91C32682000D707D7"
-            BuildableName = "Drive Thru.app"
+            BuildableName = "DriveThru.app"
             BlueprintName = "Drive Thru"
             ReferencedContainer = "container:Drive Thru.xcodeproj">
          </BuildableReference>
@@ -95,7 +95,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "28EC3CA91C32682000D707D7"
-            BuildableName = "Drive Thru.app"
+            BuildableName = "DriveThru.app"
             BlueprintName = "Drive Thru"
             ReferencedContainer = "container:Drive Thru.xcodeproj">
          </BuildableReference>

@@ -220,7 +220,7 @@ class UserTokenViewController: UIViewController, UITableViewDataSource, UITableV
                     return
                 case "inprogress":
                     self.defaults.setBool(true, forKey: "isOrderInProgress")
-                    self.imgPreparation.image = UIImage(named: "Preparation_Green.png")
+                    self.imgPreparation.image = UIImage(named: "Prepration_Green.png")
                     self.imgOrderPlaced.image = UIImage(named: "Cart.png")
                     self.imgKioskReady.image = UIImage(named: "forDelivery.png")
                     self.imgPickupReady.image = UIImage(named: "ReadyForPickup3.png")
@@ -246,7 +246,7 @@ class UserTokenViewController: UIViewController, UITableViewDataSource, UITableV
                     
                     self.shapeLayer.fillColor = UIColor(red: 51/100, green: 51/100, blue: 51/100, alpha: 1).CGColor
                     self.lblDisplayTokenId.textColor = UIColor(red: 34/100, green: 255/100, blue: 7/100, alpha: 1)
-                    self.imgPickupReady.image = UIImage(named: "PickupReady_green.png")
+                    self.imgPickupReady.image = UIImage(named: "PICKED_UP_Green")
                     self.imgOrderPlaced.image = UIImage(named: "Cart.png")
                     self.imgPreparation.image = UIImage(named: "cooking.png")
                     self.imgKioskReady.image = UIImage(named: "forDelivery.png")
@@ -257,6 +257,7 @@ class UserTokenViewController: UIViewController, UITableViewDataSource, UITableV
                     self.defaults.setBool(false, forKey: "isOrderInProgress")
                     self.imgPickedUp.hidden = false
                     self.lblDisplayTokenId.addSubview(self.imgPickedUp)
+                   // self.lblDisplayTokenId.font = UIFont(name: self.lblDisplayTokenId.font.fontName, size: 60)
                     self.imgPickupReady.image = UIImage(named: "ReadyForPickup3.png")
                     self.imgOrderPlaced.image = UIImage(named: "Cart.png")
                     self.imgPreparation.image = UIImage(named: "cooking.png")
@@ -432,7 +433,7 @@ class UserTokenViewController: UIViewController, UITableViewDataSource, UITableV
         return cell
     }
     func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return appDelegate.orderedProductDetails.orderedProductDetails[0].orderedProduct.count
+        return 0//appDelegate.orderedProductDetails.orderedProductDetails[0].orderedProduct.count
     }
     
     

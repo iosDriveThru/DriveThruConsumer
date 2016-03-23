@@ -123,6 +123,17 @@ class PreferenceViewController: UIViewController, UICollectionViewDelegate, UICo
         return appDelegate.menuJson.products.count
     }
     
+    func collectionView(collectionView: UICollectionView,
+        layout collectionViewLayout: UICollectionViewLayout,
+        sizeForItemAtIndexPath indexPath: NSIndexPath) -> CGSize {
+           
+             return CGSizeMake(collectionView.bounds.size.width, collectionView.bounds.size.height-20)
+            
+         
+            
+            
+    }
+    
     func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
         var cell = UICollectionViewCell()
         //let bounds = UIScreen.mainScreen().bounds
